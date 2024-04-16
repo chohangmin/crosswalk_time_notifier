@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:crosswalk_time_notifier/services/geolocator_service.dart';
 import 'package:crosswalk_time_notifier/widgets/geolocator_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,7 +9,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GeolocatorService geolocatorService = GeolocatorService();
 
 
   @override

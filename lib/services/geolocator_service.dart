@@ -76,6 +76,7 @@ class GeolocatorService {
 
   void updatePositionList(PositionItemType type, String displayValue) {
     positionItems.add(PositionItem(type, displayValue));
+    // setState
   }
 
   void toggleServiceStatusStream() {
@@ -94,6 +95,7 @@ class GeolocatorService {
           serviceStatusValue = 'enabled';
         } else {
           if (positionStreamSubscription != null) {
+            // setState
             positionStreamSubscription?.cancel();
             positionStreamSubscription = null;
             updatePositionList(
@@ -121,6 +123,8 @@ class GeolocatorService {
           ));
       positionStreamSubscription?.pause();
     }
+
+    //setState
 
     if (positionStreamSubscription == null) {
       return;
