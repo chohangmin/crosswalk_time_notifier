@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GeolocatorService {
@@ -17,12 +15,6 @@ class GeolocatorService {
   StreamSubscription<ServiceStatus>? serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
 
-  @override
-  void initState() {
-    super.initState();
-    toggleServiceStatusStream();
-  }
-
   Future<void> getCurrentPosition() async {
     final hasPermission = await handlePermission();
 
@@ -30,7 +22,7 @@ class GeolocatorService {
       return;
     }
 
-    final position = geolocatorPlatform.getCurrentPosition();
+    final position = await geolocatorPlatform.getCurrentPosition();
 
     updatePositionList(
       PositionItemType.position,
@@ -84,7 +76,6 @@ class GeolocatorService {
 
   void updatePositionList(PositionItemType type, String displayValue) {
     positionItems.add(PositionItem(type, displayValue));
-    setstate(() {});
   }
 
   void toggleServiceStatusStream() {
@@ -103,12 +94,10 @@ class GeolocatorService {
           serviceStatusValue = 'enabled';
         } else {
           if (positionStreamSubscription != null) {
-            setState(() {
-              positionStreamSubscription?.cancel();
-              positionStreamSubscription = null;
-              updatePositionList(
-                  PositionItemType.log, 'Position Stream has been canceled.');
-            });
+            positionStreamSubscription?.cancel();
+            positionStreamSubscription = null;
+            updatePositionList(
+                PositionItemType.log, 'Position Stream has been canceled.');
           }
           serviceStatusValue = 'disabled';
         }
@@ -133,34 +122,29 @@ class GeolocatorService {
       positionStreamSubscription?.pause();
     }
 
-    setState(() {
-      if (positionStreamSubscription == null) {
-        return;
-      }
-      String statusDisplayValue;
-      if (positionStreamSubscription!.isPaused) {
-        positionStreamSubscription!.resume();
-        statusDisplayValue = 'resumed';
-      } else {
-        positionStreamSubscription!.pause();
-        statusDisplayValue = 'pause';
-      }
+    if (positionStreamSubscription == null) {
+      return;
+    }
+    String statusDisplayValue;
+    if (positionStreamSubscription!.isPaused) {
+      positionStreamSubscription!.resume();
+      statusDisplayValue = 'resumed';
+    } else {
+      positionStreamSubscription!.pause();
+      statusDisplayValue = 'pause';
+    }
 
-      updatePositionList(
-        PositionItemType.log,
-        'Listening for position updates $statusDisplayValue',
-      );
-    });
+    updatePositionList(
+      PositionItemType.log,
+      'Listening for position updates $statusDisplayValue',
+    );
   }
 
-  @override
   void dispose() {
     if (positionStreamSubscription != null) {
       positionStreamSubscription!.cancel();
       positionStreamSubscription = null;
     }
-
-    super.dispose();
   }
 }
 
