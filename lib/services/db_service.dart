@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:csv/csv.dart';
 import 'dart:io';
@@ -9,8 +10,17 @@ class DbService {
     return const CsvToListConverter().convert(csvString);
   }
 
+  void readCsvFile() {}
+
   void makeDb() async {
-    File csvFile = File('../../data.csv');
+    String filePath =
+        'C:/Users/sligh/Visual Studio Code/crosswalk_time_notifier/data.csv';
+    File csvFile = File(filePath);
+
+    if (!csvFile.existsSync()) {
+      print("파일이 존재하지 않습니다.");
+      return;
+    }
     String csvString = csvFile.readAsStringSync();
 
     List<List<dynamic>> csvData = parseCsv(csvString);
