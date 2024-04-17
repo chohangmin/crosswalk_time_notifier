@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:crosswalk_time_notifier/services/geolocator_service.dart';
+import 'package:crosswalk_time_notifier/services/locator_service.dart';
 
 class GeolocatorWidget extends StatefulWidget {
   const GeolocatorWidget({Key? key}) : super(key: key);

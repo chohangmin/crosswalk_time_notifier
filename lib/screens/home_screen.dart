@@ -1,5 +1,6 @@
+import 'package:crosswalk_time_notifier/widgets/db_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:crosswalk_time_notifier/widgets/geolocator_widget.dart';
+import 'package:crosswalk_time_notifier/widgets/locator_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,13 +10,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home Screen'),),
-      body: GeolocatorWidget(),
+      appBar: AppBar(
+        title: const Text('Home Screen'),
+      ),
+      body: DbWidget(),
     );
   }
 }

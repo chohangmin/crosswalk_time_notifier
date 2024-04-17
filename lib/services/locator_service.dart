@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:crosswalk_time_notifier/models/locator_model.dart';
 
 class GeolocatorService {
   static const String kLocationServicesDisableMessage =
@@ -150,16 +151,4 @@ class GeolocatorService {
       positionStreamSubscription = null;
     }
   }
-}
-
-enum PositionItemType {
-  log,
-  position,
-}
-
-class PositionItem {
-  PositionItem(this.type, this.displayValue);
-
-  final PositionItemType type;
-  final String displayValue;
 }
