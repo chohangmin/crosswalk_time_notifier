@@ -1,32 +1,23 @@
+import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:csv/csv.dart';
-import 'dart:io';
 
 class DbService {
   List<List<dynamic>> parseCsv(String csvString) {
     return const CsvToListConverter().convert(csvString);
   }
 
-  void readCsvFile() {}
-
   void makeDb() async {
-    String filePath =
-        'C:/Users/sligh/Visual Studio Code/crosswalk_time_notifier/data.csv';
-    File csvFile = File(filePath);
-
-    if (!csvFile.existsSync()) {
-      print("파일이 존재하지 않습니다.");
-      return;
-    }
-    String csvString = csvFile.readAsStringSync();
+    String csvString = await rootBundle.loadString('data.csv');
 
     List<List<dynamic>> csvData = parseCsv(csvString);
 
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'crossInfo.db');
+
+    await deleteDatabase(path);
 
     Database database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
@@ -35,12 +26,18 @@ class DbService {
     });
 
     Batch batch = database.batch();
-    for (var row in csvData) {
+    for (int i = 1; i < csvData.length; i++) {
+      var row = csvData[i];
+      String id = row[0].toString();
+      String name = row[1].toString();
+      double lat = double.parse(row[2].toString());
+      double lot = double.parse(row[3].toString());
+
       batch.insert('crossInfo', {
-        'id': row[0],
-        'name': row[1],
-        'lat': row[2],
-        'lot': row[3],
+        'id': id,
+        'name': name,
+        'lat': lat,
+        'lot': lot,
       });
     }
     await batch.commit();
@@ -54,15 +51,7 @@ class DbService {
 
     Database database = await openDatabase(path);
 
-    // List<Map<String, dynamic>> result = await database.query(
-    //   'crossInfo',
-    //   where = 'name = ?',
-    //   whereArgs: [condition],
-    // );
-
     List<Map<String, dynamic>> result = await database.query('crossInfo');
-
-    await database.close();
 
     return result;
   }
