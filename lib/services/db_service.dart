@@ -22,7 +22,7 @@ class DbService {
     Database database = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute(
-          'CREATE TABLE crossInfo (id INTEGER PRIMARY KEY, name TEXT, lat REAL, lot REAL)');
+          'CREATE TABLE crossInfo (id INTEGER PRIMARY KEY, name TEXT, lat REAL, lon REAL)');
     });
 
     Batch batch = database.batch();
@@ -30,19 +30,17 @@ class DbService {
       var row = csvData[i];
       String id = row[0].toString();
       String name = row[1].toString();
-      double lat = double.parse(row[2].toString());
-      double lot = double.parse(row[3].toString());
+      double lat = double.parse(row[2].toString()) / 1e7;
+      double lon = double.parse(row[3].toString()) / 1e7;
 
       batch.insert('crossInfo', {
         'id': id,
         'name': name,
         'lat': lat,
-        'lot': lot,
+        'lon': lon,
       });
     }
     await batch.commit();
-
-    await database.close();
   }
 
   Future<List<Map<String, dynamic>>> getAllow() async {
@@ -53,6 +51,22 @@ class DbService {
 
     List<Map<String, dynamic>> result = await database.query('crossInfo');
 
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> searchCoordinatesInRadius(
+      Database database,
+      double latitude,
+      double longitude,
+      double radius) async {
+    List<Map<String, dynamic>> result = await database.rawQuery('''
+    SELECT * FROM coordinates
+    WHERE (6371 * acos(
+      cos(radians($latitude)) * cos(radians(latitude)) *
+      cos(radians(longitude) - radians($longitude)) +
+      sin(radians($latitude)) * sin(radians(latitude))
+    )) <= $radius
+  ''');
     return result;
   }
 }

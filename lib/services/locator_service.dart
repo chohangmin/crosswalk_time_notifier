@@ -16,11 +16,11 @@ class GeolocatorService {
   StreamSubscription<ServiceStatus>? serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
 
-  Future<void> getCurrentPosition() async {
+  Future<Position?> getCurrentPosition() async {
     final hasPermission = await handlePermission();
 
     if (!hasPermission) {
-      return;
+      return null;
     }
 
     final position = await geolocatorPlatform.getCurrentPosition();
@@ -29,6 +29,8 @@ class GeolocatorService {
       PositionItemType.position,
       position.toString(),
     );
+
+    return position;
   }
 
   Future<bool> handlePermission() async {

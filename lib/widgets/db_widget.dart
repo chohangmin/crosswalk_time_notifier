@@ -26,7 +26,7 @@ class DbWidget extends StatelessWidget {
                   return ListTile(
                     title: Text(snapshot.data![index]['id'].toString()),
                     subtitle: Text(
-                        'name : ${snapshot.data![index]['name']} (lat, lot): (${snapshot.data![index]['lat']},${snapshot.data![index]['lot']},)'),
+                        'name : ${snapshot.data![index]['name']} (lat, lon): (${snapshot.data![index]['lat']},${snapshot.data![index]['lon']},)'),
                   );
                 },
               );
