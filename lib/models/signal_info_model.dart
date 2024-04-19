@@ -1,0 +1,38 @@
+class SignalInfoModel {
+  final String id,
+      ntBcsgStat,
+      ntPdsgStat,
+      etBcsgStat,
+      etPdsgStat,
+      stBcsgStat,
+      stPdsgStat,
+      wtBcsgStat,
+      wtPdsgStat,
+      neBcsgStat,
+      nePdsgStat,
+      seBcsgStat,
+      sePdsgStat,
+      swBcsgStat,
+      swPdsgStat,
+      nwBcsgStat,
+      nwPdsgStat;
+
+  SignalInfoModel.fromJson(Map<String, dynamic> json)
+      : id = json['itstId'],
+        ntBcsgStat = json['ntBcsgRmdrCs'],
+        ntPdsgStat = json['ntPdsgRmdrCs'],
+        etBcsgStat = json['etBcsgRmdrCs'],
+        etPdsgStat = json['etPdsgRmdrCs'],
+        stBcsgStat = json['stBcsgRmdrCs'],
+        stPdsgStat = json['stPdsgRmdrCs'],
+        wtBcsgStat = json['wtBcsgRmdrCs'],
+        wtPdsgStat = json['wtPdsgRmdrCs'],
+        neBcsgStat = json['neBcsgRmdrCs'],
+        nePdsgStat = json['nePdsgRmdrCs'],
+        seBcsgStat = json['seBcsgRmdrCs'],
+        sePdsgStat = json['sePdsgRmdrCs'],
+        swBcsgStat = json['swBcsgRmdrCs'],
+        swPdsgStat = json['swPdsgRmdrCs'],
+        nwBcsgStat = json['nwBcsgRmdrCs'],
+        nwPdsgStat = json['nwPdsgRmdrCs'];
+}

@@ -58,20 +58,21 @@ class SearchWidget extends StatelessWidget {
 
     final List<Map<String, dynamic>> coordinates = await dbService.getAllow();
 
-    for (var position in coordinates) {
-      print('[C] Latitude: ${position['lat']}, Longitude: ${position['lon']}');
-    }
-
     final filteredPositions = searchService.filterCoordinates(
       coordinates,
-      0.5,
+      0.1,
       position.latitude,
       position.longitude,
     );
 
-    for (var position in filteredPositions) {
-      print('[F] Latitude: ${position['lat']}, Longitude: ${position['lon']}');
-    }
+    if (filteredPositions.isEmpty) {
+    } else if (filteredPositions.length == 1) {
+      Future<void> fetchData(
+          Function(List<Map<String, dynamic>> data) callback) async {
+        List<Map<String, dynamic>> data = filteredPositions;
+        callback(data);
+      }
+    } else {}
 
     return filteredPositions;
   }

@@ -1,0 +1,38 @@
+class RemainTimeModel {
+  final String id,
+      ntBcsgStat,
+      ntPdsgStat,
+      etBcsgStat,
+      etPdsgStat,
+      stBcsgStat,
+      stPdsgStat,
+      wtBcsgStat,
+      wtPdsgStat,
+      neBcsgStat,
+      nePdsgStat,
+      seBcsgStat,
+      sePdsgStat,
+      swBcsgStat,
+      swPdsgStat,
+      nwBcsgStat,
+      nwPdsgStat;
+
+  RemainTimeModel.fromJson(Map<String, dynamic> json)
+      : id = json['itstId'],
+        ntBcsgStat = json['ntBcsgStatNm'],
+        ntPdsgStat = json['ntPdsgStatNm'],
+        etBcsgStat = json['etBcsgStatNm'],
+        etPdsgStat = json['etPdsgStatNm'],
+        stBcsgStat = json['stBcsgStatNm'],
+        stPdsgStat = json['stPdsgStatNm'],
+        wtBcsgStat = json['wtBcsgStatNm'],
+        wtPdsgStat = json['wtPdsgStatNm'],
+        neBcsgStat = json['neBcsgStatNm'],
+        nePdsgStat = json['nePdsgStatNm'],
+        seBcsgStat = json['seBcsgStatNm'],
+        sePdsgStat = json['sePdsgStatNm'],
+        swBcsgStat = json['swBcsgStatNm'],
+        swPdsgStat = json['swPdsgStatNm'],
+        nwBcsgStat = json['nwBcsgStatNm'],
+        nwPdsgStat = json['nwPdsgStatNm'];
+}
