@@ -52,7 +52,6 @@ class SearchWidget extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>?> searchPositions() async {
     Position? position = await geolocatorService.getCurrentPosition();
-    print('hello');
 
     if (position == null) {
       throw Exception('Failed to retrieve current position.');

@@ -1,5 +1,5 @@
 class SignalInfoModel {
-  final String id,
+  final String? id,
       ntBcsgStat,
       ntPdsgStat,
       etBcsgStat,
@@ -35,4 +35,26 @@ class SignalInfoModel {
         swPdsgStat = json['swPdsgRmdrCs'],
         nwBcsgStat = json['nwBcsgRmdrCs'],
         nwPdsgStat = json['nwPdsgRmdrCs'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'ntBcsgStat': ntBcsgStat,
+      'ntPdsgStat': ntPdsgStat,
+      'etBcsgStat': etBcsgStat,
+      'etPdsgStat': etPdsgStat,
+      'stBcsgStat': stBcsgStat,
+      'stPdsgStat': stPdsgStat,
+      'wtBcsgStat': wtBcsgStat,
+      'wtPdsgStat': wtPdsgStat,
+      'neBcsgStat': neBcsgStat,
+      'nePdsgStat': nePdsgStat,
+      'seBcsgStat': seBcsgStat,
+      'sePdsgStat': sePdsgStat,
+      'swBcsgStat': swBcsgStat,
+      'swPdsgStat': swPdsgStat,
+      'nwBcsgStat': nwBcsgStat,
+      'nwPdsgStat': nwPdsgStat,
+    };
+  }
 }
