@@ -13,52 +13,64 @@ class ApiService {
   static const String signalInfoUrl =
       'http://t-data.seoul.go.kr/apig/apiman-gateway/tapi/v2xSignalPhaseInformation/1.0';
 
-  String apiKey = '';
+  late String apiKey;
 
   late String id; // not yet
 
   Future<void> initialize() async {
+    await dotenv.load();
     apiKey = await getApiKey();
-    id = await getId();
   }
 
   Future<String> getApiKey() async {
-    await dotenv.load();
     String apiKey = dotenv.env['API_KEY'].toString();
     return apiKey;
   }
 
-  Future<String> getId() async {
-    List<Map<String, dynamic>> filteredPosition = await fetchData();
-    String id = filteredPosition[0]['id'];
-    return id;
+  void setId(String newId) {
+    id = newId;
+    print('ID has been set to: $id');
   }
 
-  Future<List<RemainTimeModel>> getRemainTimes() async {
+//List<RemainTimeModel>
+  Future<void> getRemainTimes() async {
     List<RemainTimeModel> remainTimeInstances = [];
+    print('check 123');
+    print('check the orders $apiKey');
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey');
+    print('$remainTimeUrl?apiKey=$apiKey');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final remainTimes = jsonDecode(response.body);
+      print('before duration.');
       for (var remainTime in remainTimes) {
+        print('1');
         remainTimeInstances.add(RemainTimeModel.fromJson(remainTime));
+        print('2');
       }
-      return remainTimeInstances;
+      print('Remain Time : $remainTimeInstances');
+      // return remainTimeInstances;
+    } else {
+      throw Exception(
+          'Failed to fetch signal info. Status code: ${response.statusCode}');
     }
-    throw Error();
   }
 
-  Future<List<SignalInfoModel>> getSignalInfo() async {
-    List<SignalInfoModel> signalInfoInstance = [];
+//List<SignalInfoModel>
+  Future<void> getSignalInfo() async {
+    List<SignalInfoModel> signalInfoInstances = [];
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final signalInfos = jsonDecode(response.body);
       for (var signalInfo in signalInfos) {
-        signalInfoInstance.add(SignalInfoModel.fromJson(signalInfo));
+        signalInfoInstances.add(SignalInfoModel.fromJson(signalInfo));
       }
-      return signalInfoInstance;
+      // print('Signal Info Instance: $signalInfoInstances');
+      // return signalInfoInstances;
+    } else {
+      throw Exception(
+          'Failed to fetch signal info. Status code: ${response.statusCode}');
     }
-    throw Error();
   }
 }

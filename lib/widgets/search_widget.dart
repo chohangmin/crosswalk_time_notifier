@@ -1,3 +1,4 @@
+import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
@@ -10,6 +11,7 @@ class SearchWidget extends StatelessWidget {
   GeolocatorService geolocatorService = GeolocatorService();
   SearchService searchService = SearchService();
   DbService dbService = DbService();
+  ApiService apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class SearchWidget extends StatelessWidget {
                 Map<String, dynamic> position = filteredPositions[index];
                 return ListTile(
                   title: Text(
-                      'Name: ${position['name']}, Latitude: ${position['lat']}, Longtitude: ${position['lon']}'),
+                      'ID: ${position['id']} Name: ${position['name']}, Latitude: ${position['lat']}, Longtitude: ${position['lon']}'),
                 );
               },
             );
@@ -60,18 +62,22 @@ class SearchWidget extends StatelessWidget {
 
     final filteredPositions = searchService.filterCoordinates(
       coordinates,
-      0.1,
+      0.3,
       position.latitude,
       position.longitude,
     );
 
     if (filteredPositions.isEmpty) {
     } else if (filteredPositions.length == 1) {
-      Future<void> fetchData(
-          Function(List<Map<String, dynamic>> data) callback) async {
-        List<Map<String, dynamic>> data = filteredPositions;
-        callback(data);
-      }
+      String id = filteredPositions[0]['id'].toString();
+      apiService.setId(id);
+    } else if (filteredPositions.length == 2) {
+      String id = filteredPositions[0]['id'].toString();
+      apiService.setId(id);
+      await apiService.initialize();
+      await apiService.getRemainTimes();
+      await apiService.getSignalInfo();
+      return filteredPositions;
     } else {}
 
     return filteredPositions;
