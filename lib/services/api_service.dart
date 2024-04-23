@@ -39,16 +39,18 @@ class ApiService {
     List<RemainTimeModel> remainTimeInstances = [];
     print('check 123');
     print('check the orders $apiKey');
-    final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey');
-    print('$remainTimeUrl?apiKey=$apiKey');
+    final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
+    print('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final remainTimes = jsonDecode(response.body);
       for (var remainTime in remainTimes) {
-        remainTimeInstances.add(RemainTimeModel.fromJson(remainTime));
+        var instance = RemainTimeModel.fromJson(remainTime);
+        print('check rt: $instance');
+        remainTimeInstances.add(instance);
       }
-      saveRtToJsonFile(remainTimeInstances);
-      print('Remain Time : $remainTimeInstances');
+      // saveRtToJsonFile(remainTimeInstances);
+      // print('Remain Time : $remainTimeInstances');
       // return remainTimeInstances;
     } else {
       throw Exception(
@@ -59,16 +61,18 @@ class ApiService {
 //List<SignalInfoModel>
   Future<void> getSignalInfo() async {
     List<SignalInfoModel> signalInfoInstances = [];
-    final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey&itstId=$id');
-    print('$signalInfoUrl?apiKey=$apiKey&itstId=$id');
+    final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
+    print('$signalInfoUrl?apiKey=$apiKey');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final signalInfos = jsonDecode(response.body);
       for (var signalInfo in signalInfos) {
-        signalInfoInstances.add(SignalInfoModel.fromJson(signalInfo));
+        var instance = SignalInfoModel.fromJson(signalInfo);
+        // print('check si : $instance');
+        signalInfoInstances.add(instance);
       }
-      saveSiToJsonFile(signalInfoInstances);
-      print('Signal Info Instance: $signalInfoInstances');
+      // saveSiToJsonFile(signalInfoInstances);
+      // print('Signal Info Instance: $signalInfoInstances');
       // return signalInfoInstances;
     } else {
       throw Exception(

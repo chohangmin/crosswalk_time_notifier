@@ -19,22 +19,22 @@ class RemainTimeModel {
 
   RemainTimeModel.fromJson(Map<String, dynamic> json)
       : id = json['itstId'],
-        ntBcsgStat = json['ntBcsgStatNm'],
-        ntPdsgStat = json['ntPdsgStatNm'],
-        etBcsgStat = json['etBcsgStatNm'],
-        etPdsgStat = json['etPdsgStatNm'],
-        stBcsgStat = json['stBcsgStatNm'],
-        stPdsgStat = json['stPdsgStatNm'],
-        wtBcsgStat = json['wtBcsgStatNm'],
-        wtPdsgStat = json['wtPdsgStatNm'],
-        neBcsgStat = json['neBcsgStatNm'],
-        nePdsgStat = json['nePdsgStatNm'],
-        seBcsgStat = json['seBcsgStatNm'],
-        sePdsgStat = json['sePdsgStatNm'],
-        swBcsgStat = json['swBcsgStatNm'],
-        swPdsgStat = json['swPdsgStatNm'],
-        nwBcsgStat = json['nwBcsgStatNm'],
-        nwPdsgStat = json['nwPdsgStatNm'];
+        ntBcsgStat = json['ntBcsgRmdrCs'],
+        ntPdsgStat = json['ntPdsgRmdrCs'],
+        etBcsgStat = json['etBcsgRmdrCs'],
+        etPdsgStat = json['etPdsgRmdrCs'],
+        stBcsgStat = json['stBcsgRmdrCs'],
+        stPdsgStat = json['stPdsgRmdrCs'],
+        wtBcsgStat = json['wtBcsgRmdrCs'],
+        wtPdsgStat = json['wtPdsgRmdrCs'],
+        neBcsgStat = json['neBcsgRmdrCs'],
+        nePdsgStat = json['nePdsgRmdrCs'],
+        seBcsgStat = json['seBcsgRmdrCs'],
+        sePdsgStat = json['sePdsgRmdrCs'],
+        swBcsgStat = json['swBcsgRmdrCs'],
+        swPdsgStat = json['swPdsgRmdrCs'],
+        nwBcsgStat = json['nwBcsgRmdrCs'],
+        nwPdsgStat = json['nwPdsgRmdrCs'];
 
   Map<String, dynamic> toJson() {
     return {
