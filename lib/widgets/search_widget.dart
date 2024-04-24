@@ -1,4 +1,7 @@
+import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
+import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
 import 'package:crosswalk_time_notifier/services/api_service.dart';
+import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
@@ -12,6 +15,7 @@ class SearchWidget extends StatelessWidget {
   SearchService searchService = SearchService();
   DbService dbService = DbService();
   ApiService apiService = ApiService();
+  LightService lightService = LightService();
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +71,20 @@ class SearchWidget extends StatelessWidget {
     );
 
     if (filteredPositions.isEmpty) {
+      print('filteredPosition is Empty.');
     } else if (filteredPositions.length == 1) {
+      print('filteredPosition is 1.');
       String id = filteredPositions[0]['id'].toString();
       apiService.setId(id);
+      await apiService.initialize();
+      RemainTimeModel? filteredRT = await apiService.getRemainTimes();
+      SignalInfoModel? filteredSI = await apiService.getSignalInfo();
+
+      lightService.setApiInstances(filteredRT!, filteredSI!);
+
+      return filteredPositions;
     } else if (filteredPositions.length == 2) {
+      print('filteredPosition is 2.');
       String id = filteredPositions[0]['id'].toString();
       apiService.setId(id);
       await apiService.initialize();

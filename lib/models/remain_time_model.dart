@@ -1,6 +1,7 @@
 class RemainTimeModel {
-  final String? id,
-      ntBcsgStat,
+  final String? id, trsmYear, trsmMt, trsmTm, trsmMs;
+
+  final double? ntBcsgStat,
       ntPdsgStat,
       etBcsgStat,
       etPdsgStat,
@@ -19,6 +20,10 @@ class RemainTimeModel {
 
   RemainTimeModel.fromJson(Map<String, dynamic> json)
       : id = json['itstId'],
+        trsmYear = json['trsmYear'],
+        trsmMt = json['trsmMt'],
+        trsmTm = json['trsmTm'],
+        trsmMs = json['trsmMs'],
         ntBcsgStat = json['ntBcsgRmdrCs'],
         ntPdsgStat = json['ntPdsgRmdrCs'],
         etBcsgStat = json['etBcsgRmdrCs'],
@@ -57,4 +62,33 @@ class RemainTimeModel {
       'nwPdsgStat': nwPdsgStat,
     };
   }
+
+  @override
+  String toString() {
+    return 'SignalInfoModel{\n'
+        '  id: $id,\n'
+        '  trsmYear: $trsmYear,\n'
+        '  trsmMt: $trsmMt,\n'
+        '  trsmTm: $trsmTm,\n'
+        '  trsmMs: $trsmMs,\n'
+        '  ntBcsgStat: $ntBcsgStat,\n'
+        '  ntPdsgStat: $ntPdsgStat,\n'
+        '  etBcsgStat: $etBcsgStat,\n'
+        '  etPdsgStat: $etPdsgStat,\n'
+        '  stBcsgStat: $stBcsgStat,\n'
+        '  stPdsgStat: $stPdsgStat,\n'
+        '  wtBcsgStat: $wtBcsgStat,\n'
+        '  wtPdsgStat: $wtPdsgStat,\n'
+        '  neBcsgStat: $neBcsgStat,\n'
+        '  nePdsgStat: $nePdsgStat,\n'
+        '  seBcsgStat: $seBcsgStat,\n'
+        '  sePdsgStat: $sePdsgStat,\n'
+        '  swBcsgStat: $swBcsgStat,\n'
+        '  swPdsgStat: $swPdsgStat,\n'
+        '  nwBcsgStat: $nwBcsgStat,\n'
+        '  nwPdsgStat: $nwPdsgStat\n'
+        '}';
+  }
+
+
 }

@@ -80,4 +80,6 @@ class SignalInfoModel {
         '  nwPdsgStat: $nwPdsgStat\n'
         '}';
   }
+
+
 }
