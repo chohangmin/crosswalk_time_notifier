@@ -6,7 +6,6 @@ import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:crosswalk_time_notifier/widgets/search_widget.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ApiService {
