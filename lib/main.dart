@@ -1,4 +1,4 @@
-import 'package:crosswalk_time_notifier/screens/home_screen.dart';
+import 'package:crosswalk_time_notifier/screens/show_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
 
@@ -17,7 +17,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: HomeScreen(),
+      home: ShowScreen(),
     );
   }
 }
