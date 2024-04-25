@@ -33,7 +33,6 @@ class ApiService {
   }
 
   Future<RemainTimeModel?> getRemainTimes() async {
-    // List<RemainTimeModel> remainTimeInstances = [];
     RemainTimeModel? remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     print('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
@@ -54,16 +53,20 @@ class ApiService {
   }
 
   Future<SignalInfoModel?> getSignalInfo() async {
-    List<SignalInfoModel> signalInfoInstances = [];
     SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
     print('$signalInfoUrl?apiKey=$apiKey');
+    print('check -1');
     final response = await http.get(url);
+    print('check 0');
     if (response.statusCode == 200) {
       final signalInfos = jsonDecode(response.body);
+      print('check 1');
       for (var signalInfo in signalInfos) {
         var instance = SignalInfoModel.fromJson(signalInfo);
+        print('check 2');
         if (instance.id == id) {
+          print('check 3');
           print('check si : $instance');
           signalInfoInstance = instance;
           break;

@@ -5,16 +5,23 @@ import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
+import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 
 class SearchWidget extends StatelessWidget {
   SearchWidget({super.key});
 
   GeolocatorService geolocatorService = GeolocatorService();
+
   SearchService searchService = SearchService();
+
   DbService dbService = DbService();
+
   ApiService apiService = ApiService();
+
   LightService lightService = LightService();
 
   @override
@@ -40,20 +47,29 @@ class SearchWidget extends StatelessWidget {
               );
             }
             final filteredPositions = snapshot.data!;
-            return ListView.builder(
-              itemCount: filteredPositions.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> position = filteredPositions[index];
-                return ListTile(
-                  title: Text(
-                      'ID: ${position['id']} Name: ${position['name']}, Latitude: ${position['lat']}, Longtitude: ${position['lon']}'),
-                );
-              },
-            );
+            final signals = lightService.getSignalStates();
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredPositions.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> position = filteredPositions[index];
+                    return ListTile(
+                      title: Text(
+                          'ID: ${position['id']} Name: ${position['name']}, Latitude: ${position['lat']}, Longtitude: ${position['lon']}'),
+                    );
+                  },
+                ),
+              ),
+              Expanded(
+                child: LightWidget(signals: signals),
+              ),
+            ]);
           }),
     );
   }
 
+  // Future<void> updateSignals() async {
   Future<List<Map<String, dynamic>>?> searchPositions() async {
     Position? position = await geolocatorService.getCurrentPosition();
 
@@ -81,6 +97,14 @@ class SearchWidget extends StatelessWidget {
       SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
       lightService.setApiInstances(filteredRT!, filteredSI!);
+      lightService.printApiInstances();
+      print('success setting filteredData!');
+      if (lightService.checkApiInstances()) {
+        lightService.checkNonNullFields();
+        print('success checking!');
+        lightService.printStats();
+        // updateSignals();
+      }
 
       return filteredPositions;
     } else if (filteredPositions.length == 2) {

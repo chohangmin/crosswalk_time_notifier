@@ -45,6 +45,44 @@ class LightService {
     nwPdsgStat = isNotNull(filteredRT.nwPdsgStat);
   }
 
+//   void initializeStats() {
+//   ntBcsgStat = false;
+//   ntPdsgStat = false;
+//   etBcsgStat = false;
+//   etPdsgStat = false;
+//   stBcsgStat = false;
+//   stPdsgStat = false;
+//   wtBcsgStat = false;
+//   wtPdsgStat = false;
+//   neBcsgStat = false;
+//   nePdsgStat = false;
+//   seBcsgStat = false;
+//   sePdsgStat = false;
+//   swBcsgStat = false;
+//   swPdsgStat = false;
+//   nwBcsgStat = false;
+//   nwPdsgStat = false;
+// }
+
+  void printStats() {
+    print('check ntBcsgStat : $ntBcsgStat\n'
+        'check ntPdsgStat : $ntPdsgStat\n'
+        'check etBcsgStat : $etBcsgStat\n'
+        'check etPdsgStat : $etPdsgStat\n'
+        'check stBcsgStat : $stBcsgStat\n'
+        'check stPdsgStat : $stPdsgStat\n'
+        'check wtBcsgStat : $wtBcsgStat\n'
+        'check wtPdsgStat : $wtPdsgStat\n'
+        'check neBcsgStat : $neBcsgStat\n'
+        'check nePdsgStat : $nePdsgStat\n'
+        'check seBcsgStat : $seBcsgStat\n'
+        'check sePdsgStat : $sePdsgStat\n'
+        'check swBcsgStat : $swBcsgStat\n'
+        'check swPdsgStat : $swPdsgStat\n'
+        'check nwBcsgStat : $nwBcsgStat\n'
+        'check nwPdsgStat : $nwPdsgStat');
+  }
+
   List<bool> getSignalStates() {
     List<bool> signalStates = [
       ntBcsgStat,
@@ -64,59 +102,41 @@ class LightService {
       nwBcsgStat,
       nwPdsgStat,
     ];
+    print('[FUCK]');
+    printStats();
     return signalStates;
   }
 
-  void setApiInstances(RemainTimeModel filteredRT, SignalInfoModel filteredSI) {
-    filteredRT = filteredRT;
-    filteredSI = filteredSI;
+  void setApiInstances(RemainTimeModel RT, SignalInfoModel SI) {
+    filteredRT = RT;
+    filteredSI = SI;
   }
 
-  void checkApiInstances() {
-    if (_checkNullFieldsSI(filteredSI) && _checkNullFieldsRT(filteredRT)) {}
+  void printApiInstances() {
+    print('[FIND] filteredRT $filteredRT');
+    print('[FIND] filteredRT $filteredSI');
   }
 
-  bool _checkNullFieldsSI(SignalInfoModel model) {
-    return model.id != null &&
-        model.ntBcsgStat != null &&
-        model.ntPdsgStat != null &&
-        model.etBcsgStat != null &&
-        model.etPdsgStat != null &&
-        model.stBcsgStat != null &&
-        model.stPdsgStat != null &&
-        model.wtBcsgStat != null &&
-        model.wtPdsgStat != null &&
-        model.neBcsgStat != null &&
-        model.nePdsgStat != null &&
-        model.seBcsgStat != null &&
-        model.sePdsgStat != null &&
-        model.swBcsgStat != null &&
-        model.swPdsgStat != null &&
-        model.nwBcsgStat != null &&
-        model.nwPdsgStat != null;
-  }
-
-  bool _checkNullFieldsRT(RemainTimeModel model) {
-    return model.id != null &&
-        model.trsmYear != null &&
-        model.trsmMt != null &&
-        model.trsmTm != null &&
-        model.trsmMs != null &&
-        model.ntBcsgStat != null &&
-        model.ntPdsgStat != null &&
-        model.etBcsgStat != null &&
-        model.etPdsgStat != null &&
-        model.stBcsgStat != null &&
-        model.stPdsgStat != null &&
-        model.wtBcsgStat != null &&
-        model.wtPdsgStat != null &&
-        model.neBcsgStat != null &&
-        model.nePdsgStat != null &&
-        model.seBcsgStat != null &&
-        model.sePdsgStat != null &&
-        model.swBcsgStat != null &&
-        model.swPdsgStat != null &&
-        model.nwBcsgStat != null &&
-        model.nwPdsgStat != null;
+  bool checkApiInstances() {
+    if ((filteredRT.ntBcsgStat != null && filteredSI.ntBcsgStat != null) ||
+        (filteredRT.ntPdsgStat != null && filteredSI.ntPdsgStat != null) ||
+        (filteredRT.etBcsgStat != null && filteredSI.etBcsgStat != null) ||
+        (filteredRT.etPdsgStat != null && filteredSI.etPdsgStat != null) ||
+        (filteredRT.stBcsgStat != null && filteredSI.stBcsgStat != null) ||
+        (filteredRT.stPdsgStat != null && filteredSI.stPdsgStat != null) ||
+        (filteredRT.wtBcsgStat != null && filteredSI.wtBcsgStat != null) ||
+        (filteredRT.wtPdsgStat != null && filteredSI.wtPdsgStat != null) ||
+        (filteredRT.neBcsgStat != null && filteredSI.neBcsgStat != null) ||
+        (filteredRT.nePdsgStat != null && filteredSI.nePdsgStat != null) ||
+        (filteredRT.seBcsgStat != null && filteredSI.seBcsgStat != null) ||
+        (filteredRT.sePdsgStat != null && filteredSI.sePdsgStat != null) ||
+        (filteredRT.swBcsgStat != null && filteredSI.swBcsgStat != null) ||
+        (filteredRT.swPdsgStat != null && filteredSI.swPdsgStat != null) ||
+        (filteredRT.nwBcsgStat != null && filteredSI.nwBcsgStat != null) ||
+        (filteredRT.nwPdsgStat != null && filteredSI.nwPdsgStat != null)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
