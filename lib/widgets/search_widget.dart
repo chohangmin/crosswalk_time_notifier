@@ -90,6 +90,7 @@ class SearchWidget extends StatelessWidget {
       print('filteredPosition is Empty.');
     } else if (filteredPositions.length == 1) {
       print('filteredPosition is 1.');
+
       String id = filteredPositions[0]['id'].toString();
       apiService.setId(id);
       await apiService.initialize();
@@ -103,20 +104,9 @@ class SearchWidget extends StatelessWidget {
         lightService.checkNonNullFields();
         print('success checking!');
         lightService.printStats();
-        // updateSignals();
-      }
+      } else {}
 
       return filteredPositions;
-    } else if (filteredPositions.length == 2) {
-      print('filteredPosition is 2.');
-      String id = filteredPositions[0]['id'].toString();
-      apiService.setId(id);
-      await apiService.initialize();
-      await apiService.getRemainTimes();
-      await apiService.getSignalInfo();
-      return filteredPositions;
-    } else {}
-
-    return filteredPositions;
+    }
   }
 }

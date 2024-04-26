@@ -22,6 +22,13 @@ class LightService {
       nwBcsgStat = false,
       nwPdsgStat = false;
 
+  void setApiInstances(RemainTimeModel RT, SignalInfoModel SI) {
+    filteredRT = RT;
+    filteredSI = SI;
+  }
+
+  
+
   bool isNotNull(dynamic field) {
     return field != null;
   }
@@ -45,44 +52,6 @@ class LightService {
     nwPdsgStat = isNotNull(filteredRT.nwPdsgStat);
   }
 
-//   void initializeStats() {
-//   ntBcsgStat = false;
-//   ntPdsgStat = false;
-//   etBcsgStat = false;
-//   etPdsgStat = false;
-//   stBcsgStat = false;
-//   stPdsgStat = false;
-//   wtBcsgStat = false;
-//   wtPdsgStat = false;
-//   neBcsgStat = false;
-//   nePdsgStat = false;
-//   seBcsgStat = false;
-//   sePdsgStat = false;
-//   swBcsgStat = false;
-//   swPdsgStat = false;
-//   nwBcsgStat = false;
-//   nwPdsgStat = false;
-// }
-
-  void printStats() {
-    print('check ntBcsgStat : $ntBcsgStat\n'
-        'check ntPdsgStat : $ntPdsgStat\n'
-        'check etBcsgStat : $etBcsgStat\n'
-        'check etPdsgStat : $etPdsgStat\n'
-        'check stBcsgStat : $stBcsgStat\n'
-        'check stPdsgStat : $stPdsgStat\n'
-        'check wtBcsgStat : $wtBcsgStat\n'
-        'check wtPdsgStat : $wtPdsgStat\n'
-        'check neBcsgStat : $neBcsgStat\n'
-        'check nePdsgStat : $nePdsgStat\n'
-        'check seBcsgStat : $seBcsgStat\n'
-        'check sePdsgStat : $sePdsgStat\n'
-        'check swBcsgStat : $swBcsgStat\n'
-        'check swPdsgStat : $swPdsgStat\n'
-        'check nwBcsgStat : $nwBcsgStat\n'
-        'check nwPdsgStat : $nwPdsgStat');
-  }
-
   List<bool> getSignalStates() {
     List<bool> signalStates = [
       ntBcsgStat,
@@ -102,19 +71,7 @@ class LightService {
       nwBcsgStat,
       nwPdsgStat,
     ];
-    print('[FUCK]');
-    printStats();
     return signalStates;
-  }
-
-  void setApiInstances(RemainTimeModel RT, SignalInfoModel SI) {
-    filteredRT = RT;
-    filteredSI = SI;
-  }
-
-  void printApiInstances() {
-    print('[FIND] filteredRT $filteredRT');
-    print('[FIND] filteredRT $filteredSI');
   }
 
   bool checkApiInstances() {
@@ -138,5 +95,29 @@ class LightService {
     } else {
       return false;
     }
+  }
+
+  void printApiInstances() {
+    print('[FIND] filteredRT $filteredRT');
+    print('[FIND] filteredRT $filteredSI');
+  }
+
+  void printStats() {
+    print('check ntBcsgStat : $ntBcsgStat\n'
+        'check ntPdsgStat : $ntPdsgStat\n'
+        'check etBcsgStat : $etBcsgStat\n'
+        'check etPdsgStat : $etPdsgStat\n'
+        'check stBcsgStat : $stBcsgStat\n'
+        'check stPdsgStat : $stPdsgStat\n'
+        'check wtBcsgStat : $wtBcsgStat\n'
+        'check wtPdsgStat : $wtPdsgStat\n'
+        'check neBcsgStat : $neBcsgStat\n'
+        'check nePdsgStat : $nePdsgStat\n'
+        'check seBcsgStat : $seBcsgStat\n'
+        'check sePdsgStat : $sePdsgStat\n'
+        'check swBcsgStat : $swBcsgStat\n'
+        'check swPdsgStat : $swPdsgStat\n'
+        'check nwBcsgStat : $nwBcsgStat\n'
+        'check nwPdsgStat : $nwPdsgStat');
   }
 }
