@@ -32,6 +32,14 @@ class LightService {
     return field != null;
   }
 
+  double getRTUtcTime() {
+    return filteredRT.trsmUtcTime!;
+  }
+
+    double getSIUtcTime() {
+    return filteredRT.trsmUtcTime!;
+  }
+
   void checkNonNullFields() {
     ntBcsgStat = isNotNull(filteredRT.ntBcsgStat);
     ntPdsgStat = isNotNull(filteredRT.ntPdsgStat);

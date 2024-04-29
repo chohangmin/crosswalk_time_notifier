@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
-class CurrentTimeWidget extends StatefulWidget {
-  const CurrentTimeWidget({super.key});
+class ApiTimeWidget extends StatefulWidget {
+  double utcTime;
+  final String name;
+
+  ApiTimeWidget({
+    super.key,
+    required this.name,
+    required this.utcTime,
+  });
 
   @override
-  State<CurrentTimeWidget> createState() => _CurrentTimeWidgetState();
+  State<ApiTimeWidget> createState() => _ApiTimeWidgetState();
 }
 
-class _CurrentTimeWidgetState extends State<CurrentTimeWidget> {
+class _ApiTimeWidgetState extends State<ApiTimeWidget> {
   late Timer _timer;
   late String _currentTime;
 
@@ -20,17 +27,35 @@ class _CurrentTimeWidgetState extends State<CurrentTimeWidget> {
     _startTimer();
   }
 
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateTime();
+      widget.utcTime += 1000;
+    });
+  }
+
   void _updateTime() {
     setState(() {
-      _currentTime = DataFormat.Hms().format(Datat)
+      DateTime currentTimeAPI =
+          DateTime.fromMillisecondsSinceEpoch(widget.utcTime.toInt());
+DateTime currentTimeKST = currentTimeAPI.add(Duration(hours: 9));
+      _currentTime = DateFormat.Hms().format(currentTimeKST);
     });
   }
 
   @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('$time'),
+    return Text(
+      '${widget.name} : $_currentTime',
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

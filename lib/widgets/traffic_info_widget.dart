@@ -3,7 +3,7 @@ import 'dart:async';
 
 class TrafficInfo extends StatefulWidget {
   final String name;
-  final bool? isMovementAllowed;
+  bool? isMovementAllowed;
   double? time;
 
   TrafficInfo({
@@ -31,9 +31,14 @@ class _TrafficInfoState extends State<TrafficInfo> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (widget.time! > 0) {
-          widget.time = widget.time! - 1;
+          widget.time = widget.time! - 10;
         } else {
           timer.cancel();
+          if (widget.isMovementAllowed != null) {
+            widget.isMovementAllowed = !widget.isMovementAllowed!;
+
+          }
+          
         }
       });
     });

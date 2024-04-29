@@ -1,7 +1,8 @@
 class RemainTimeModel {
   final String? id, trsmYear, trsmMt, trsmTm, trsmMs;
 
-  final double? ntBcsgStat,
+  final double? trsmUtcTime,
+      ntBcsgStat,
       ntPdsgStat,
       etBcsgStat,
       etPdsgStat,
@@ -20,6 +21,7 @@ class RemainTimeModel {
 
   RemainTimeModel.fromJson(Map<String, dynamic> json)
       : id = json['itstId'],
+        trsmUtcTime = json['trsmUtcTime'],
         trsmYear = json['trsmYear'],
         trsmMt = json['trsmMt'],
         trsmTm = json['trsmTm'],
@@ -44,6 +46,7 @@ class RemainTimeModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'trsmUtcTime': trsmUtcTime,
       'ntBcsgStat': ntBcsgStat,
       'ntPdsgStat': ntPdsgStat,
       'etBcsgStat': etBcsgStat,
@@ -89,6 +92,4 @@ class RemainTimeModel {
         '  nwPdsgStat: $nwPdsgStat\n'
         '}';
   }
-
-
 }

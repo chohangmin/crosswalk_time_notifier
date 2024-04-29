@@ -5,6 +5,8 @@ import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
+import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
+import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/traffic_signal_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,6 +51,9 @@ class SearchWidget extends StatelessWidget {
             }
             final filteredPositions = snapshot.data!;
             final signals = lightService.getSignalLists();
+            final RTUtcTime = lightService.getRTUtcTime();
+            final SIUtcTime = lightService.getSIUtcTime();
+
             return Column(children: [
               Expanded(
                 child: ListView.builder(
@@ -62,9 +67,10 @@ class SearchWidget extends StatelessWidget {
                   },
                 ),
               ),
-              Expanded(
-                child: TrafficSignalWidget(data: signals),
-              ),
+              const CurrentTimeWidget(),
+              ApiTimeWidget(name: 'RT', utcTime: RTUtcTime),
+              ApiTimeWidget(name: 'SI', utcTime: SIUtcTime),
+              TrafficSignalWidget(data: signals),
             ]);
           }),
     );
