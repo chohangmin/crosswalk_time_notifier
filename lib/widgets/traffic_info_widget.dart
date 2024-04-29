@@ -26,7 +26,8 @@ class TrafficInfo extends StatelessWidget {
           Center(
             child: RichText(
               text: TextSpan(
-                text: '$time',
+                text: '$name \n $time',
+                style: const TextStyle(fontSize: 10),
               ),
             ),
           )
