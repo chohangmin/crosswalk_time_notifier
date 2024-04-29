@@ -1,5 +1,6 @@
 import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class LightWidget extends StatelessWidget {
   final List<bool> signals;
@@ -14,15 +15,14 @@ class LightWidget extends StatelessWidget {
             itemCount: signals.length,
             itemBuilder: (context, index) {
               return Container(
-                width: 10,
-                height: 10,
+                width: 20,
+                height: 20,
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: signals[index] ? Colors.blue : Colors.red,
                 ),
               );
-            })
-        );
+            }));
   }
 }
