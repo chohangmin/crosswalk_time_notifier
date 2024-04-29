@@ -1,5 +1,6 @@
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
+import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 
 class LightService {
   late RemainTimeModel filteredRT;
@@ -27,10 +28,16 @@ class LightService {
     filteredSI = SI;
   }
 
-  
-
   bool isNotNull(dynamic field) {
     return field != null;
+  }
+
+  double getRTUtcTime() {
+    return filteredRT.trsmUtcTime!;
+  }
+
+    double getSIUtcTime() {
+    return filteredRT.trsmUtcTime!;
   }
 
   void checkNonNullFields() {
@@ -50,6 +57,88 @@ class LightService {
     swPdsgStat = isNotNull(filteredRT.swPdsgStat);
     nwBcsgStat = isNotNull(filteredRT.nwBcsgStat);
     nwPdsgStat = isNotNull(filteredRT.nwPdsgStat);
+  }
+
+  List<TrafficInfoModel> getSignalLists() {
+    List<TrafficInfoModel> list = [
+      TrafficInfoModel(
+          name: 'North B',
+          isMovementAllowed: changeSigToBool(filteredSI.ntBcsgStat),
+          time: filteredRT.ntBcsgStat),
+      TrafficInfoModel(
+          name: 'North P',
+          isMovementAllowed: changeSigToBool(filteredSI.ntPdsgStat),
+          time: filteredRT.ntPdsgStat),
+      TrafficInfoModel(
+          name: 'North East B',
+          isMovementAllowed: changeSigToBool(filteredSI.neBcsgStat),
+          time: filteredRT.neBcsgStat),
+      TrafficInfoModel(
+          name: 'North East P',
+          isMovementAllowed: changeSigToBool(filteredSI.nePdsgStat),
+          time: filteredRT.nePdsgStat),
+      TrafficInfoModel(
+          name: 'East B',
+          isMovementAllowed: changeSigToBool(filteredSI.etBcsgStat),
+          time: filteredRT.etBcsgStat),
+      TrafficInfoModel(
+          name: 'East P',
+          isMovementAllowed: changeSigToBool(filteredSI.etPdsgStat),
+          time: filteredRT.etPdsgStat),
+      TrafficInfoModel(
+          name: 'East South B',
+          isMovementAllowed: changeSigToBool(filteredSI.seBcsgStat),
+          time: filteredRT.seBcsgStat),
+      TrafficInfoModel(
+          name: 'East South P',
+          isMovementAllowed: changeSigToBool(filteredSI.sePdsgStat),
+          time: filteredRT.sePdsgStat),
+      TrafficInfoModel(
+          name: 'South B',
+          isMovementAllowed: changeSigToBool(filteredSI.stBcsgStat),
+          time: filteredRT.stBcsgStat),
+      TrafficInfoModel(
+          name: 'South P',
+          isMovementAllowed: changeSigToBool(filteredSI.stPdsgStat),
+          time: filteredRT.stPdsgStat),
+      TrafficInfoModel(
+          name: 'South West B',
+          isMovementAllowed: changeSigToBool(filteredSI.swBcsgStat),
+          time: filteredRT.swBcsgStat),
+      TrafficInfoModel(
+          name: 'South West P',
+          isMovementAllowed: changeSigToBool(filteredSI.swPdsgStat),
+          time: filteredRT.swPdsgStat),
+      TrafficInfoModel(
+          name: 'West B',
+          isMovementAllowed: changeSigToBool(filteredSI.wtBcsgStat),
+          time: filteredRT.wtBcsgStat),
+      TrafficInfoModel(
+          name: 'West P',
+          isMovementAllowed: changeSigToBool(filteredSI.wtPdsgStat),
+          time: filteredRT.wtPdsgStat),
+      TrafficInfoModel(
+          name: 'West North B',
+          isMovementAllowed: changeSigToBool(filteredSI.nwBcsgStat),
+          time: filteredRT.nwBcsgStat),
+      TrafficInfoModel(
+          name: 'West North P',
+          isMovementAllowed: changeSigToBool(filteredSI.nwPdsgStat),
+          time: filteredRT.nwPdsgStat),
+    ];
+
+    return list;
+  }
+
+  bool? changeSigToBool(String? SigState) {
+    if (SigState == 'protected-Movement-Allowed' ||
+        SigState == 'permissive-Movement-Allowed') {
+      return true;
+    } else if (SigState == 'stop-And-Remain') {
+      return false;
+    }
+
+    return null;
   }
 
   List<bool> getSignalStates() {

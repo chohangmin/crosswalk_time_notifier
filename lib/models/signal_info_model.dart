@@ -1,4 +1,5 @@
 class SignalInfoModel {
+  final double trsmUtcTime;
   final String? id,
       ntBcsgStat,
       ntPdsgStat,
@@ -19,6 +20,7 @@ class SignalInfoModel {
 
   SignalInfoModel.fromJson(Map<String, dynamic> json)
       : id = json['itstId'],
+        trsmUtcTime = json['trsmUtcTime'],
         ntBcsgStat = json['ntBcsgStatNm'],
         ntPdsgStat = json['ntPdsgStatNm'],
         etBcsgStat = json['etBcsgStatNm'],
@@ -39,6 +41,7 @@ class SignalInfoModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'trsmUtcTime': trsmUtcTime,
       'ntBcsgStat': ntBcsgStat,
       'ntPdsgStat': ntPdsgStat,
       'etBcsgStat': etBcsgStat,
@@ -80,6 +83,4 @@ class SignalInfoModel {
         '  nwPdsgStat: $nwPdsgStat\n'
         '}';
   }
-
-
 }

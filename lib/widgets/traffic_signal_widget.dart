@@ -7,32 +7,14 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class TrafficSignalWidget extends StatefulWidget {
-  const TrafficSignalWidget({super.key});
+  const TrafficSignalWidget({super.key, required this.data});
+  final List<TrafficInfoModel> data;
 
   @override
   _TrafficSignalWidgetState createState() => _TrafficSignalWidgetState();
 }
 
 class _TrafficSignalWidgetState extends State<TrafficSignalWidget> {
-  final data = [
-    const TrafficInfo(name: '1', isMovementAllowed: true, time: 10.0),
-    const TrafficInfo(name: '2', isMovementAllowed: false, time: 20.0),
-    const TrafficInfo(name: '3', isMovementAllowed: true, time: 15.0),
-    const TrafficInfo(name: '4', isMovementAllowed: false, time: 25.0),
-    const TrafficInfo(name: '5', isMovementAllowed: true, time: 12.0),
-    const TrafficInfo(name: '6', isMovementAllowed: false, time: 18.0),
-    const TrafficInfo(name: '7', isMovementAllowed: true, time: 22.0),
-    const TrafficInfo(name: '8', isMovementAllowed: false, time: 27.0),
-    const TrafficInfo(name: '9', isMovementAllowed: true, time: 10.0),
-    const TrafficInfo(name: '10', isMovementAllowed: false, time: 20.0),
-    const TrafficInfo(name: '11', isMovementAllowed: true, time: 15.0),
-    const TrafficInfo(name: '12', isMovementAllowed: false, time: 25.0),
-    const TrafficInfo(name: '13', isMovementAllowed: true, time: 12.0),
-    const TrafficInfo(name: '14', isMovementAllowed: false, time: 18.0),
-    const TrafficInfo(name: '15', isMovementAllowed: true, time: 22.0),
-    const TrafficInfo(name: '16', isMovementAllowed: false, time: 27.0),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -48,7 +30,7 @@ class _TrafficSignalWidgetState extends State<TrafficSignalWidget> {
             ),
             child: Stack(
               children: List.generate(16, (index) {
-                final angle = index * (2 * pi / 16) + pi / 2 * 3;
+                final angle = index * (2 * pi / 16) + pi * 3 / 2 - pi * 1 / 16;
                 final x = 150 + 120 * cos(angle);
                 final y = 150 + 120 * sin(angle);
 
@@ -56,9 +38,9 @@ class _TrafficSignalWidgetState extends State<TrafficSignalWidget> {
                   left: x - 30,
                   top: y - 15,
                   child: TrafficInfo(
-                    name: data[index].name,
-                    isMovementAllowed: data[index].isMovementAllowed,
-                    time: data[index].time,
+                    name: widget.data[index].name,
+                    isMovementAllowed: widget.data[index].isMovementAllowed,
+                    time: widget.data[index].time,
                   ),
                 );
               }),
