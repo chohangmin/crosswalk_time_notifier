@@ -19,7 +19,6 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
   DbService dbService = DbService();
 
   bool _searching = false;
-  bool _searchingCompleted = false;
   bool _dbInit = false;
   String _searchingState = '';
 
@@ -32,7 +31,6 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
       ),
       body: Page(
         searching: _searching,
-        searchingCompleted: _searchingCompleted,
         searchingState: _searchingState,
       ),
     );
@@ -83,8 +81,12 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
       _searching = true;
     });
 
+    int i = 0;
+
     while (_searching) {
       await Future.delayed(const Duration(seconds: 1));
+
+      print(i++);
 
       Position? position = await geolocatorService.getCurrentPosition();
       if (position == null) {
@@ -94,7 +96,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
 
       final filteredPositions = searchService.filterCoordinates(
         coordinates,
-        0.7,
+        0,
         position.latitude,
         position.longitude,
       );
@@ -107,7 +109,6 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         setState(() {
           _searchingState = 'Searched 1';
           _searching = false;
-          _searchingCompleted = true;
         });
       } else {
         setState(() {
@@ -120,36 +121,34 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
 
 class Page extends StatelessWidget {
   final bool searching;
-  final bool searchingCompleted;
   final String searchingState;
 
   const Page({
     super.key,
     required this.searching,
-    required this.searchingCompleted,
     required this.searchingState,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (!searching) {
-      if (searchingState == 'Empty' || searchingState == 'more than 1') {
-        return Column(
+    if (searchingState == 'Empty' || searchingState == 'more than 1') {
+      return Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(searchingState),
             const CircularProgressIndicator(),
           ],
-        );
-      }
+        ),
+      );
     }
 
-    if (searching && searchingCompleted) {
+    if (searchingState == 'Searched 1') {
       return Center(
         child: Text('$searchingState : find 1'),
       );
     }
-    if (!searching && !searchingCompleted && searchingState.isEmpty) {
+    if (!searching && searchingState.isEmpty) {
       return const Center(
         child: Text('first screen.'),
       );
