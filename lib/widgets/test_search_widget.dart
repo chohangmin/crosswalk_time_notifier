@@ -1,41 +1,26 @@
-import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
-import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
-import 'package:crosswalk_time_notifier/services/api_service.dart';
-import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
-import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/traffic_signal_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:path/path.dart';
 
-class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+class TestSearchWidget extends StatefulWidget {
+  const TestSearchWidget({super.key});
 
   @override
-  State<SearchWidget> createState() => _SearchWidgetState();
+  State<TestSearchWidget> createState() => _TestSearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
+class _TestSearchWidgetState extends State<TestSearchWidget> {
   GeolocatorService geolocatorService = GeolocatorService();
 
   SearchService searchService = SearchService();
 
   DbService dbService = DbService();
 
-  ApiService apiService = ApiService();
-
-  LightService lightService = LightService();
-
   bool _searching = false;
   bool _searchingCompleted = false;
+  bool _dbInit = false;
   String _searchingState = '';
 
   @override
@@ -55,31 +40,36 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   PopupMenuButton _createActions() {
     return PopupMenuButton(
-      elevation: 40,
-      onSelected: (value) async {
-        switch (value) {
-          case 1:
-            dbService.makeDb();
-            break;
-          case 2:
-            _startSearching();
-            break;
-          case 3:
-            _pauseSearching();
-            break;
-          default:
-            break;
-        }
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 1,
-          child: Text('DB initialize.'),
-        ),
-        const PopupMenuItem(value: 2, child: Text('Start Searching.')),
-        const PopupMenuItem(value: 3, child: Text('Pause Searching.'))
-      ],
-    );
+        elevation: 40,
+        onSelected: (value) async {
+          switch (value) {
+            case 1:
+              dbService.makeDb();
+              _dbInit = !_dbInit;
+
+              break;
+            case 2:
+              _startSearching();
+              break;
+            case 3:
+              _pauseSearching();
+              break;
+            default:
+              break;
+          }
+        },
+        itemBuilder: (context) {
+          if (!_dbInit) {
+            return [
+              const PopupMenuItem(value: 1, child: Text('DB initialize.'))
+            ];
+          } else {
+            return [
+              const PopupMenuItem(value: 2, child: Text('Start Searching.')),
+              const PopupMenuItem(value: 3, child: Text('Pause Searching.'))
+            ];
+          }
+        });
   }
 
   void _pauseSearching() {
@@ -104,19 +94,25 @@ class _SearchWidgetState extends State<SearchWidget> {
 
       final filteredPositions = searchService.filterCoordinates(
         coordinates,
-        0.3,
+        0.7,
         position.latitude,
         position.longitude,
       );
 
       if (filteredPositions.isEmpty) {
-        _searchingState = 'Empty';
+        setState(() {
+          _searchingState = 'Empty';
+        });
       } else if (filteredPositions.length == 1) {
-        _searchingState = 'Searched 1';
-        _searching = false;
-        _searchingCompleted = true;
+        setState(() {
+          _searchingState = 'Searched 1';
+          _searching = false;
+          _searchingCompleted = true;
+        });
       } else {
-        _searchingState = 'more than 1';
+        setState(() {
+          _searchingState = 'more than 1';
+        });
       }
     }
   }
@@ -153,9 +149,14 @@ class Page extends StatelessWidget {
         child: Text('$searchingState : find 1'),
       );
     }
+    if (!searching && !searchingCompleted && searchingState.isEmpty) {
+      return const Center(
+        child: Text('first screen.'),
+      );
+    }
 
     return const Center(
-      child: CircularProgressIndicator(),
+      child: Text('nothing'),
     );
   }
 }
