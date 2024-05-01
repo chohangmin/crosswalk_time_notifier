@@ -43,9 +43,10 @@ class ApiService {
         var instance = RemainTimeModel.fromJson(remainTime);
         print('check rt: $instance');
         remainTimeInstance = instance;
-        break;
+        // break;
+        return remainTimeInstance;
       }
-      return remainTimeInstance;
+      // return remainTimeInstance;
     } else {
       throw Exception(
           'Failed to fetch signal info. Status code: ${response.statusCode}');
@@ -56,23 +57,22 @@ class ApiService {
     SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
     print('$signalInfoUrl?apiKey=$apiKey');
-    print('check -1');
     final response = await http.get(url);
-    print('check 0');
+  
     if (response.statusCode == 200) {
       final signalInfos = jsonDecode(response.body);
-      print('check 1');
+     
       for (var signalInfo in signalInfos) {
         var instance = SignalInfoModel.fromJson(signalInfo);
-        print('check 2');
+      
         if (instance.id == id) {
-          print('check 3');
           print('check si : $instance');
           signalInfoInstance = instance;
-          break;
+          // break;
+          return signalInfoInstance;
         }
       }
-      return signalInfoInstance;
+      return null;
     } else {
       throw Exception(
           'Failed to fetch signal info. Status code: ${response.statusCode}');

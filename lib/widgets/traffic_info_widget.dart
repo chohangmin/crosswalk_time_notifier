@@ -36,9 +36,7 @@ class _TrafficInfoState extends State<TrafficInfo> {
           timer.cancel();
           if (widget.isMovementAllowed != null) {
             widget.isMovementAllowed = !widget.isMovementAllowed!;
-
           }
-          
         }
       });
     });
@@ -69,7 +67,7 @@ class _TrafficInfoState extends State<TrafficInfo> {
           Center(
             child: RichText(
               text: TextSpan(
-                text: '${widget.name} \n ${widget.time}',
+                text: '${widget.name} \n ${((widget.time ?? 0) ~/ 10).toInt()}',
                 style: const TextStyle(
                   fontSize: 10,
                 ),

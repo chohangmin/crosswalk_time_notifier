@@ -54,6 +54,7 @@ class SearchWidget extends StatelessWidget {
             final RTUtcTime = lightService.getRTUtcTime();
             final SIUtcTime = lightService.getSIUtcTime();
 
+
             return Column(children: [
               Expanded(
                 child: ListView.builder(
