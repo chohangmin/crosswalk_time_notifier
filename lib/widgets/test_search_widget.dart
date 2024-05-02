@@ -3,6 +3,7 @@ import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:async';
 
 class TestSearchWidget extends StatefulWidget {
   const TestSearchWidget({super.key});
@@ -12,14 +13,13 @@ class TestSearchWidget extends StatefulWidget {
 }
 
 class _TestSearchWidgetState extends State<TestSearchWidget> {
-  GeolocatorService geolocatorService = GeolocatorService();
-
-  SearchService searchService = SearchService();
-
-  DbService dbService = DbService();
+  final GeolocatorService geolocatorService = GeolocatorService();
+  final SearchService searchService = SearchService();
+  final DbService dbService = DbService();
 
   bool _searching = false;
   bool _dbInit = false;
+  bool _searchingCompleted = false;
   String _searchingState = '';
 
   @override
@@ -29,9 +29,23 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         title: const Text('CrossWalk Time Notifier.'),
         actions: [_createActions()],
       ),
-      body: Page(
-        searching: _searching,
-        searchingState: _searchingState,
+      body: Center(
+        child: Column(children: [
+          Text('S : $_searching , SC : $_searchingCompleted'),
+          _searching
+              ? (_searchingCompleted
+                  ? const Text('searching id only 1!')
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator(),
+                        Text(_searchingState),
+                      ],
+                    ))
+              : Center(
+                  child: Text('default Screen \n String : $_searchingState'),
+                )
+        ]),
       ),
     );
   }
@@ -43,7 +57,9 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           switch (value) {
             case 1:
               dbService.makeDb();
-              _dbInit = !_dbInit;
+              setState(() {
+                _dbInit = true;
+              });
 
               break;
             case 2:
@@ -78,14 +94,17 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
 
   void _startSearching() async {
     setState(() {
-      _searching = true;
+      if (_searchingCompleted == false) {
+        _searching = true;
+      } else {
+        _searching = true;
+        _searchingCompleted = false;
+      }
     });
 
     int i = 0;
 
-    while (_searching) {
-      await Future.delayed(const Duration(seconds: 1));
-
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
       print(i++);
 
       Position? position = await geolocatorService.getCurrentPosition();
@@ -96,7 +115,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
 
       final filteredPositions = searchService.filterCoordinates(
         coordinates,
-        0,
+        0.5,
         position.latitude,
         position.longitude,
       );
@@ -107,7 +126,9 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         });
       } else if (filteredPositions.length == 1) {
         setState(() {
+          timer.cancel();
           _searchingState = 'Searched 1';
+          _searchingCompleted = true;
           _searching = false;
         });
       } else {
@@ -115,47 +136,6 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           _searchingState = 'more than 1';
         });
       }
-    }
-  }
-}
-
-class Page extends StatelessWidget {
-  final bool searching;
-  final String searchingState;
-
-  const Page({
-    super.key,
-    required this.searching,
-    required this.searchingState,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (searchingState == 'Empty' || searchingState == 'more than 1') {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(searchingState),
-            const CircularProgressIndicator(),
-          ],
-        ),
-      );
-    }
-
-    if (searchingState == 'Searched 1') {
-      return Center(
-        child: Text('$searchingState : find 1'),
-      );
-    }
-    if (!searching && searchingState.isEmpty) {
-      return const Center(
-        child: Text('first screen.'),
-      );
-    }
-
-    return const Center(
-      child: Text('nothing'),
-    );
+    });
   }
 }
