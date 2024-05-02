@@ -1,6 +1,7 @@
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
+import 'package:crosswalk_time_notifier/widgets/test_show_light_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
@@ -30,22 +31,19 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         actions: [_createActions()],
       ),
       body: Center(
-        child: Column(children: [
-          Text('S : $_searching , SC : $_searchingCompleted'),
-          _searching
-              ? (_searchingCompleted
-                  ? const Text('searching id only 1!')
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(),
-                        Text(_searchingState),
-                      ],
-                    ))
-              : Center(
-                  child: Text('default Screen \n String : $_searchingState'),
-                )
-        ]),
+        child: _searching
+            ? (_searchingCompleted
+                ? const Text('searching id only 1!')
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      Text(_searchingState),
+                    ],
+                  ))
+            : Center(
+                child: Text('default Screen \n String : $_searchingState'),
+              ),
       ),
     );
   }
@@ -125,6 +123,9 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           _searchingState = 'Empty';
         });
       } else if (filteredPositions.length == 1) {
+        String id = filteredPositions[0]['id'].toString();
+        TestShowWidget(id: id);
+
         setState(() {
           timer.cancel();
           _searchingState = 'Searched 1';

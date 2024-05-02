@@ -37,7 +37,7 @@ class LightService {
   }
 
     double getSIUtcTime() {
-    return filteredRT.trsmUtcTime!;
+    return filteredSI.trsmUtcTime!;
   }
 
   void checkNonNullFields() {
