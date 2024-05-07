@@ -5,7 +5,6 @@ import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-
 class ApiService {
   static const String remainTimeUrl =
       'http://t-data.seoul.go.kr/apig/apiman-gateway/tapi/v2xSignalPhaseTimingInformation/1.0';
@@ -15,7 +14,7 @@ class ApiService {
   late String apiKey;
   late String id;
 
-  Future<void> initialize() async {
+  Future<void> setApiKey() async {
     await dotenv.load();
     apiKey = await getApiKey();
   }
@@ -29,8 +28,8 @@ class ApiService {
     id = newId;
   }
 
-  Future<RemainTimeModel?> getRemainTimes() async {
-    RemainTimeModel? remainTimeInstance;
+  Future<RemainTimeModel> getRemainTime() async {
+    RemainTimeModel remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     print('RT url : $remainTimeUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
@@ -45,8 +44,8 @@ class ApiService {
     }
   }
 
-  Future<SignalInfoModel?> getSignalInfo() async {
-    SignalInfoModel? signalInfoInstance;
+  Future<SignalInfoModel> getSignalInfo() async {
+    SignalInfoModel signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
     print('SI url : $signalInfoUrl?apiKey=$apiKey');
     final response = await http.get(url);
@@ -64,6 +63,5 @@ class ApiService {
       throw Exception(
           'Failed to fetch signal info. Status code: ${response.statusCode}');
     }
-    return null;
   }
 }

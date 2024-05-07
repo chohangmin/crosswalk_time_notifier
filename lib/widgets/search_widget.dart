@@ -101,8 +101,8 @@ class SearchWidget extends StatelessWidget {
 
       String id = filteredPositions[0]['id'].toString();
       apiService.setId(id);
-      await apiService.initialize();
-      RemainTimeModel? filteredRT = await apiService.getRemainTimes();
+      await apiService.setApiKey();
+      RemainTimeModel? filteredRT = await apiService.getRemainTime();
       SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
       lightService.setApiInstances(filteredRT!, filteredSI!);
