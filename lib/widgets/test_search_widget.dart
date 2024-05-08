@@ -124,7 +124,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         });
       } else if (filteredPositions.length == 1) {
         String id = filteredPositions[0]['id'].toString();
-        TestShowWidget(id: id);
+        TestShowLightWidget(id: id);
 
         setState(() {
           timer.cancel();

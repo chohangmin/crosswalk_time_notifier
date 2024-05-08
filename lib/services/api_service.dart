@@ -28,8 +28,8 @@ class ApiService {
     id = newId;
   }
 
-  Future<RemainTimeModel> getRemainTime() async {
-    RemainTimeModel remainTimeInstance;
+  Future<RemainTimeModel?> getRemainTime() async {
+    RemainTimeModel? remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     print('RT url : $remainTimeUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
@@ -44,8 +44,8 @@ class ApiService {
     }
   }
 
-  Future<SignalInfoModel> getSignalInfo() async {
-    SignalInfoModel signalInfoInstance;
+  Future<SignalInfoModel?> getSignalInfo() async {
+    SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
     print('SI url : $signalInfoUrl?apiKey=$apiKey');
     final response = await http.get(url);
