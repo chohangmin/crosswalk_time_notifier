@@ -6,6 +6,8 @@ class LightService {
   late RemainTimeModel filteredRT;
   late SignalInfoModel filteredSI;
 
+  LightService();
+
   bool ntPdsgStat = false,
       etPdsgStat = false,
       stPdsgStat = false,

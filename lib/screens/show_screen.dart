@@ -8,7 +8,7 @@ class ShowScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return const Scaffold(
       // body: const TrafficSignalWidget(),
       // body: SearchWidget(),
       body: TestSearchWidget(),

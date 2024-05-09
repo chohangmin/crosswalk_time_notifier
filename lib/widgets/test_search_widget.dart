@@ -22,31 +22,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
   bool _dbInit = false;
   bool _searchingCompleted = false;
   String _searchingState = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('CrossWalk Time Notifier.'),
-        actions: [_createActions()],
-      ),
-      body: Center(
-        child: _searching
-            ? (_searchingCompleted
-                ? const Text('searching id only 1!')
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(),
-                      Text(_searchingState),
-                    ],
-                  ))
-            : Center(
-                child: Text('default Screen \n String : $_searchingState'),
-              ),
-      ),
-    );
-  }
+  late TestShowLightWidget _testShowLightWidget;
 
   PopupMenuButton _createActions() {
     return PopupMenuButton(
@@ -82,6 +58,31 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
             ];
           }
         });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('CrossWalk Time Notifier.'),
+        actions: [_createActions()],
+      ),
+      body: Center(
+        child: _searching
+            ? (_searchingCompleted
+                ? const Text('searching id only 1!')
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      Text(_searchingState),
+                    ],
+                  ))
+            : Center(
+                child: Text('default Screen \n String : $_searchingState'),
+              ),
+      ),
+    );
   }
 
   void _pauseSearching() {
@@ -124,7 +125,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         });
       } else if (filteredPositions.length == 1) {
         String id = filteredPositions[0]['id'].toString();
-        TestShowLightWidget(id: id);
+        _testShowLightWidget = TestShowLightWidget(id: id);
 
         setState(() {
           timer.cancel();
@@ -132,6 +133,9 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           _searchingCompleted = true;
           _searching = false;
         });
+        print("[check] message");
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => _testShowLightWidget));
       } else {
         setState(() {
           _searchingState = 'more than 1';
