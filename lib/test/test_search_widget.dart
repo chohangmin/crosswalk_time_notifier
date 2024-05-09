@@ -23,6 +23,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
   bool _searchingCompleted = false;
   String _searchingState = '';
   late TestShowLightWidget _testShowLightWidget;
+  String id = '';
 
   PopupMenuButton _createActions() {
     return PopupMenuButton(
@@ -70,7 +71,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
       body: Center(
         child: _searching
             ? (_searchingCompleted
-                ? const Text('searching id only 1!')
+                ? TestShowLightWidget(id:id)
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -125,16 +126,17 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         });
       } else if (filteredPositions.length == 1) {
         String id = filteredPositions[0]['id'].toString();
-        _testShowLightWidget = TestShowLightWidget(id: id);
+        // _testShowLightWidget = TestShowLightWidget(id: id);
 
         setState(() {
           timer.cancel();
           _searchingState = 'Searched 1';
           _searchingCompleted = true;
           _searching = false;
+          id = id;
         });
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => _testShowLightWidget));
+        // Navigator.of(context).push(
+        //     MaterialPageRoute(builder: (context) => _testShowLightWidget));
       } else {
         setState(() {
           _searchingState = 'more than 1';
