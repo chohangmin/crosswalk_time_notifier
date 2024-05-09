@@ -1,13 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 import 'package:crosswalk_time_notifier/widgets/traffic_info_widget.dart';
 
-class TestType2LightWidget extends StatelessWidget {
+class TestType1LightWidget extends StatelessWidget {
   final List<TrafficInfoModel> data;
 
-  const TestType2LightWidget({super.key, required this.data});
+  const TestType1LightWidget({super.key, required this.data});
   @override
   Widget build(BuildContext context) {
+    print("[TYPE] 1");
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

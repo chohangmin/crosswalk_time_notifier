@@ -2,8 +2,8 @@ import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
-import 'package:crosswalk_time_notifier/widgets/test_type1_light_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/test_type2_light_widget.dart';
+import 'package:crosswalk_time_notifier/test/test_type1_light_widget.dart';
+import 'package:crosswalk_time_notifier/test/test_type2_light_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
@@ -27,9 +27,12 @@ class TestShowLightWidget extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             List responses = snapshot.data!;
+            lightService.setApiInstances(responses[0], responses[1]);
+            lightService.printApiInstances();
             final signals = lightService.getSignalLists();
             final rtUtcTime = lightService.getRTUtcTime();
             final siUtcTime = lightService.getSIUtcTime();
+
             return FutureBuilder(
                 future: _buildWidgetBasedOnApiType(responses, signals),
                 builder: (context, snapshot) {
@@ -64,14 +67,11 @@ class TestShowLightWidget extends StatelessWidget {
     SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
     List responses = [filteredRT, filteredSI];
-    
+
     return responses;
   }
 
-  Future<bool> checkApiAndType(rt, si) async {
-    lightService.setApiInstances(rt, si);
-    lightService.printApiInstances();
-
+  Future<bool> checkApiAndType() async {
     if (lightService.checkApiInstances()) {
       return lightService.checkLightType();
     } else {
@@ -81,7 +81,7 @@ class TestShowLightWidget extends StatelessWidget {
 
   Future<Widget> _buildWidgetBasedOnApiType(
       List responses, List<TrafficInfoModel> signals) async {
-    bool type = await checkApiAndType(responses[0], responses[1]);
+    bool type = await checkApiAndType();
 
     if (type) {
       return Future.value(TestType1LightWidget(data: signals));

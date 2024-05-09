@@ -29,7 +29,7 @@ class _TrafficSignalWidgetState extends State<TrafficSignalWidget> {
               color: Colors.grey[300],
             ),
             child: Stack(
-              children: List.generate(16, (index) {
+              children: List.generate(8, (index) {
                 final angle = index * (2 * pi / 16) + pi * 3 / 2 - pi * 1 / 16;
                 final x = 150 + 120 * cos(angle);
                 final y = 150 + 120 * sin(angle);

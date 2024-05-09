@@ -1,7 +1,7 @@
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
-import 'package:crosswalk_time_notifier/widgets/test_show_light_widget.dart';
+import 'package:crosswalk_time_notifier/test/test_show_light_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
@@ -103,7 +103,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
 
     int i = 0;
 
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
+    Timer.periodic(const Duration(seconds: 4), (timer) async {
       print(i++);
 
       Position? position = await geolocatorService.getCurrentPosition();
@@ -133,7 +133,6 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           _searchingCompleted = true;
           _searching = false;
         });
-        print("[check] message");
         Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => _testShowLightWidget));
       } else {
