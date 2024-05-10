@@ -71,7 +71,12 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
       body: Center(
         child: _searching
             ? (_searchingCompleted
-                ? TestShowLightWidget(id:id)
+                ?  Column(
+                    children: [
+                      TestShowLightWidget(id: id),
+                      Text('Success Loading')
+                    ],
+                  )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -132,8 +137,8 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
           timer.cancel();
           _searchingState = 'Searched 1';
           _searchingCompleted = true;
-          _searching = false;
-          id = id;
+          _searching = true;
+          this.id = id;
         });
         // Navigator.of(context).push(
         //     MaterialPageRoute(builder: (context) => _testShowLightWidget));

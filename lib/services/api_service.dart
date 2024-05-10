@@ -33,8 +33,11 @@ class ApiService {
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     print('RT url : $remainTimeUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
+    print('RT check 1');
     if (response.statusCode == 200) {
       final remainTimes = jsonDecode(response.body);
+      print('RT check 2');
+      print(remainTimes);
       remainTimeInstance = RemainTimeModel.fromJson(remainTimes[0]);
       print('RT instance : $remainTimeInstance');
       return remainTimeInstance;

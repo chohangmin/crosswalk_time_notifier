@@ -55,6 +55,10 @@ class LightService {
   List<TrafficInfoModel> getSignalLists() {
     List<TrafficInfoModel> list = [
       TrafficInfoModel(
+          name: 'West North P',
+          isMovementAllowed: changeSigToBool(filteredSI.nwPdsgStat),
+          time: filteredRT.nwPdsgStat),
+      TrafficInfoModel(
           name: 'North P',
           isMovementAllowed: changeSigToBool(filteredSI.ntPdsgStat),
           time: filteredRT.ntPdsgStat),
@@ -63,29 +67,25 @@ class LightService {
           isMovementAllowed: changeSigToBool(filteredSI.nePdsgStat),
           time: filteredRT.nePdsgStat),
       TrafficInfoModel(
+          name: 'West P',
+          isMovementAllowed: changeSigToBool(filteredSI.wtPdsgStat),
+          time: filteredRT.wtPdsgStat),
+      TrafficInfoModel(
           name: 'East P',
           isMovementAllowed: changeSigToBool(filteredSI.etPdsgStat),
           time: filteredRT.etPdsgStat),
-      TrafficInfoModel(
-          name: 'East South P',
-          isMovementAllowed: changeSigToBool(filteredSI.sePdsgStat),
-          time: filteredRT.sePdsgStat),
-      TrafficInfoModel(
-          name: 'South P',
-          isMovementAllowed: changeSigToBool(filteredSI.stPdsgStat),
-          time: filteredRT.stPdsgStat),
       TrafficInfoModel(
           name: 'South West P',
           isMovementAllowed: changeSigToBool(filteredSI.swPdsgStat),
           time: filteredRT.swPdsgStat),
       TrafficInfoModel(
-          name: 'West P',
-          isMovementAllowed: changeSigToBool(filteredSI.wtPdsgStat),
-          time: filteredRT.wtPdsgStat),
+          name: 'South P',
+          isMovementAllowed: changeSigToBool(filteredSI.stPdsgStat),
+          time: filteredRT.stPdsgStat),
       TrafficInfoModel(
-          name: 'West North P',
-          isMovementAllowed: changeSigToBool(filteredSI.nwPdsgStat),
-          time: filteredRT.nwPdsgStat),
+          name: 'East South P',
+          isMovementAllowed: changeSigToBool(filteredSI.sePdsgStat),
+          time: filteredRT.sePdsgStat),
     ];
 
     return list;

@@ -9,12 +9,19 @@ import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 
-class TestShowLightWidget extends StatelessWidget {
+class TestShowLightWidget extends StatefulWidget {
   final String id;
-  ApiService apiService = ApiService();
-  LightService lightService = LightService();
 
   TestShowLightWidget({super.key, required this.id});
+
+  @override
+  State<TestShowLightWidget> createState() => _TestShowLightWidgetState();
+}
+
+class _TestShowLightWidgetState extends State<TestShowLightWidget> {
+  ApiService apiService = ApiService();
+
+  LightService lightService = LightService();
 
   @override
   Widget build(BuildContext context) {
@@ -57,16 +64,19 @@ class TestShowLightWidget extends StatelessWidget {
 
   Future<List> getApiInstances() async {
     await apiService.setApiKey();
-    apiService.setId(id);
+    apiService.setId(widget.id);
     // final Future<RemainTimeModel?> rtFuture = apiService.getRemainTime();
     // final Future<SignalInfoModel?> siFuture = apiService.getSignalInfo();
 
     // final List responses = await Future.wait([rtFuture, siFuture]);
+ 
 
     RemainTimeModel? filteredRT = await apiService.getRemainTime();
+
     SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
     List responses = [filteredRT, filteredSI];
+   
 
     return responses;
   }

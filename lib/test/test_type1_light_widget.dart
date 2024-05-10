@@ -28,16 +28,29 @@ class TestType1LightWidget extends StatelessWidget {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(2, (index) {
-            return Padding(
+          children: [
+            Padding(
               padding: const EdgeInsets.all(8),
               child: TrafficInfo(
-                name: data[index + 3].name,
-                isMovementAllowed: data[index + 3].isMovementAllowed,
-                time: data[index + 3].time,
+                name: data[3].name,
+                isMovementAllowed: data[3].isMovementAllowed,
+                time: data[3].time,
               ),
-            );
-          }),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child:
+                  TrafficInfo(name: "Middle", isMovementAllowed: null, time: 0),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: TrafficInfo(
+                name: data[4].name,
+                isMovementAllowed: data[4].isMovementAllowed,
+                time: data[4].time,
+              ),
+            ),
+          ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
