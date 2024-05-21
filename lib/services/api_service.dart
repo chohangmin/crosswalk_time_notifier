@@ -29,10 +29,14 @@ class ApiService {
   }
 
   Future<RemainTimeModel?> getRemainTime() async {
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
+
     RemainTimeModel? remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
     print('RT url : $remainTimeUrl?apiKey=$apiKey&itstId=$id');
     final response = await http.get(url);
+
     print('RT check 1');
     if (response.statusCode == 200) {
       final remainTimes = jsonDecode(response.body);
@@ -40,6 +44,9 @@ class ApiService {
       print(remainTimes);
       remainTimeInstance = RemainTimeModel.fromJson(remainTimes[0]);
       print('RT instance : $remainTimeInstance');
+      print('[RT] ${stopwatch.elapsed}');
+      stopwatch.stop();
+
       return remainTimeInstance;
     } else {
       throw Exception(
@@ -48,6 +55,8 @@ class ApiService {
   }
 
   Future<SignalInfoModel?> getSignalInfo() async {
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
     SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
     print('SI url : $signalInfoUrl?apiKey=$apiKey');
@@ -59,6 +68,9 @@ class ApiService {
         if (instance.id == id) {
           print('SI instance : $instance');
           signalInfoInstance = instance;
+
+          print('[SI] ${stopwatch.elapsed}');
+          stopwatch.stop();
           return signalInfoInstance;
         }
       }
@@ -66,5 +78,6 @@ class ApiService {
       throw Exception(
           'Failed to fetch signal info. Status code: ${response.statusCode}');
     }
+    return null;
   }
 }

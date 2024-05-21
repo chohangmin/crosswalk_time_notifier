@@ -22,11 +22,11 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
   bool _dbInit = false;
   bool _searchingCompleted = false;
   String _searchingState = '';
-  late TestShowLightWidget _testShowLightWidget;
+  // late TestShowLightWidget _testShowLightWidget;
   String id = '';
 
-  PopupMenuButton _createActions() {
-    return PopupMenuButton(
+  PopupMenuButton _createActions() { // Popup menu, if _dbInit is false there is one option, Db initialize.
+    return PopupMenuButton(          // If _dbInit is true, there is two options, startSearching and pauseSearching.
         elevation: 40,
         onSelected: (value) async {
           switch (value) {
@@ -71,9 +71,9 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
       body: Center(
         child: _searching
             ? (_searchingCompleted
-                ?  Column(
+                ?  Column( // if searching, searchingCompleted is T, T means there is a cross id from nearby user's location.
                     children: [
-                      TestShowLightWidget(id: id),
+                      TestShowLightWidget(id: id), // Go to show light widget that request api servies, and must needed id.
                       Text('Success Loading')
                     ],
                   )
@@ -112,24 +112,24 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
     Timer.periodic(const Duration(seconds: 4), (timer) async {
       print(i++);
 
-      Position? position = await geolocatorService.getCurrentPosition();
+      Position? position = await geolocatorService.getCurrentPosition(); // 1. Find my location latitude, longitude.
       if (position == null) {
         throw Exception('Failed to retrieve current position.');
       }
-      final List<Map<String, dynamic>> coordinates = await dbService.getAllow();
+      final List<Map<String, dynamic>> coordinates = await dbService.getAllow(); // 2. If Db is init, get all data's from Db
 
-      final filteredPositions = searchService.filterCoordinates(
+      final filteredPositions = searchService.filterCoordinates( // 3. Searching user's nearby cross id.
         coordinates,
         0.5,
         position.latitude,
         position.longitude,
       );
 
-      if (filteredPositions.isEmpty) {
+      if (filteredPositions.isEmpty) { // 3 - 1. Searched location is 0, there is no cross id in that area.
         setState(() {
           _searchingState = 'Empty';
         });
-      } else if (filteredPositions.length == 1) {
+      } else if (filteredPositions.length == 1) { // 3 - 2. Searched location is 1, Successful!
         String id = filteredPositions[0]['id'].toString();
         // _testShowLightWidget = TestShowLightWidget(id: id);
 
@@ -144,7 +144,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
         //     MaterialPageRoute(builder: (context) => _testShowLightWidget));
       } else {
         setState(() {
-          _searchingState = 'more than 1';
+          _searchingState = 'more than 1'; // 3 - 2. Searched location is more than 1, there is so many cross id.
         });
       }
     });

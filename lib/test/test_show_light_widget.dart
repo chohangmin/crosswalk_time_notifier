@@ -19,8 +19,8 @@ class TestShowLightWidget extends StatefulWidget {
 }
 
 class _TestShowLightWidgetState extends State<TestShowLightWidget> {
-  ApiService apiService = ApiService();
 
+  ApiService apiService = ApiService();
   LightService lightService = LightService();
 
   @override
@@ -34,11 +34,11 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
             return Text('Error: ${snapshot.error}');
           } else {
             List responses = snapshot.data!;
-            lightService.setApiInstances(responses[0], responses[1]);
+            lightService.setApiInstances(responses[0], responses[1]); // index 0 is RT, index 1 is SI
             lightService.printApiInstances();
             final signals = lightService.getSignalLists();
-            final rtUtcTime = lightService.getRTUtcTime();
-            final siUtcTime = lightService.getSIUtcTime();
+            final rtUtcTime = lightService.getRTUtcTime(); // get RT's requested time
+            final siUtcTime = lightService.getSIUtcTime(); // get SI's requested time for check API's latency 
 
             return FutureBuilder(
                 future: _buildWidgetBasedOnApiType(responses, signals),
@@ -51,9 +51,9 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
                     return Column(
                       children: [
                         const CurrentTimeWidget(),
-                        ApiTimeWidget(name: 'RT', utcTime: rtUtcTime),
+                        ApiTimeWidget(name: 'RT', utcTime: rtUtcTime), // for check time, run Timer widget
                         ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
-                        snapshot.data!
+                        snapshot.data! // Type1 or 2 widget is executed.
                       ],
                     );
                   }
@@ -62,9 +62,11 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
         });
   }
 
-  Future<List> getApiInstances() async {
-    await apiService.setApiKey();
-    apiService.setId(widget.id);
+  Future<List> getApiInstances() async { 
+
+    await apiService.setApiKey(); // set API key
+    apiService.setId(widget.id); // set API id
+
     // final Future<RemainTimeModel?> rtFuture = apiService.getRemainTime();
     // final Future<SignalInfoModel?> siFuture = apiService.getSignalInfo();
 
@@ -72,7 +74,6 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
  
 
     RemainTimeModel? filteredRT = await apiService.getRemainTime();
-
     SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
     List responses = [filteredRT, filteredSI];
@@ -81,7 +82,7 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
     return responses;
   }
 
-  Future<bool> checkApiAndType() async {
+  Future<bool> checkApiAndType() async { // Compare RemainTime Api instance and SignalInfo Api instance. Verify relation.
     if (lightService.checkApiInstances()) {
       return lightService.checkLightType();
     } else {
@@ -89,8 +90,8 @@ class _TestShowLightWidgetState extends State<TestShowLightWidget> {
     }
   }
 
-  Future<Widget> _buildWidgetBasedOnApiType(
-      List responses, List<TrafficInfoModel> signals) async {
+  Future<Widget> _buildWidgetBasedOnApiType( // North, South, East, West is Type 1, NE, ES, SW, WN is Type 2.
+      List responses, List<TrafficInfoModel> signals) async { // get the signals list that is combine info from RT and SI.
     bool type = await checkApiAndType();
 
     if (type) {
