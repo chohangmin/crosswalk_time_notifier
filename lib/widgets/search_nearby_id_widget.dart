@@ -1,19 +1,19 @@
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
-import 'package:crosswalk_time_notifier/test/test_show_light_widget.dart';
+import 'package:crosswalk_time_notifier/widgets/request_info_api_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
-class TestSearchWidget extends StatefulWidget {
-  const TestSearchWidget({super.key});
+class SearchNearbyIdWidget extends StatefulWidget {
+  const SearchNearbyIdWidget({super.key});
 
   @override
-  State<TestSearchWidget> createState() => _TestSearchWidgetState();
+  State<SearchNearbyIdWidget> createState() => _SearchNearbyIdWidgetState();
 }
 
-class _TestSearchWidgetState extends State<TestSearchWidget> {
+class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
   final GeolocatorService geolocatorService = GeolocatorService();
   final SearchService searchService = SearchService();
   final DbService dbService = DbService();
@@ -73,7 +73,7 @@ class _TestSearchWidgetState extends State<TestSearchWidget> {
             ? (_searchingCompleted
                 ?  Column( // if searching, searchingCompleted is T, T means there is a cross id from nearby user's location.
                     children: [
-                      TestShowLightWidget(id: id), // Go to show light widget that request api servies, and must needed id.
+                      RequestInfoApiWidget(id: id), // Go to show light widget that request api servies, and must needed id.
                       Text('Success Loading')
                     ],
                   )
