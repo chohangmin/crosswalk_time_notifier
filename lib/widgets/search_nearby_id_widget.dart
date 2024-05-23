@@ -14,14 +14,16 @@ class SearchNearbyIdWidget extends StatefulWidget {
 }
 
 class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
-  final GeolocatorService geolocatorService = GeolocatorService();
-  final SearchService searchService = SearchService();
-  final DbService dbService = DbService();
 
-  bool _searching = false;
-  bool _dbInit = false;
-  bool _searchingCompleted = false;
-  String _searchingState = '';
+  final GeolocatorService geolocatorService = GeolocatorService(); // Service that returns current location, latitude, longitude
+  final SearchService searchService = SearchService(); // Service that searches for overlapping parts between DB data and the current location
+  final DbService dbService = DbService(); // Service to access the DB, and retrieve all data from it
+
+  bool _searching = false; // Flag indicating if a search is in progress
+  bool _dbInit = false; // Flag indicating if the database is initialized
+  bool _searchingCompleted = false; // Flag indicating if the search is completed
+  String _searchingState = ''; // Current state of the search result
+  
   // late TestShowLightWidget _testShowLightWidget;
   String id = '';
 

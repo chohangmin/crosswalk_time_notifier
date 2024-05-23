@@ -72,3 +72,41 @@ SI는 signal info의 약자로 신호정보 api가 호출된 시간을 나타냄
 지금처럼 West North, North East, East South, South West인 상황과 단순하게 East, South, West, North 이렇게인 상황 이렇게 2개가 있다. 
 그 이유는 교차로에서는 횡단보도가 보통 4개 씩 있으므로 이렇게 2개의 상황이라고 볼 수 있는 것이다.
 원 안의 색은 현재 보행자 신호등의 신호 색과 일치하며 그 아래 보이는 숫자는 잔여시간을 표시하고 있다.
+
+
+## 디렉토리 구조
+
+|   main.dart
+|
++---models
+|       locator_model.dart
+|       remain_time_model.dart
+|       signal_info_model.dart
+|       traffic_info_model.dart
+|
++---screens
+|       show_screen.dart
+|
++---services
+|       api_service.dart
+|       db_service.dart
+|       light_service.dart
+|       locator_service.dart
+|       search_service.dart
+|
++---test_widgets
+|       db_widget.dart
+|       light_widget.dart
+|       locator_widget.dart
+|       search_widget.dart
+|       traffic_info_widget.dart
+|       traffic_signal_widget.dart
+|       t_light_widget.dart
+|
+\---widgets
+        api_time_widget.dart
+        current_time_widget.dart
+        request_info_api_widget.dart
+        search_nearby_id_widget.dart
+        type1_light_widget.dart
+        type2_light_widget.dart
