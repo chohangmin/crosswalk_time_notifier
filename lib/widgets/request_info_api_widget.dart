@@ -12,7 +12,7 @@ import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 class RequestInfoApiWidget extends StatefulWidget {
   final String id;
 
-  RequestInfoApiWidget({super.key, required this.id});
+  const RequestInfoApiWidget({super.key, required this.id});
 
   @override
   State<RequestInfoApiWidget> createState() => _RequestInfoApiWidgetState();
@@ -27,6 +27,9 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
     return FutureBuilder(
         future: getApiInstances(),
         builder: (context, snapshot) {
+          Stopwatch stopwatch = Stopwatch();
+          stopwatch.start();
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
@@ -42,14 +45,22 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
             final siUtcTime = lightService
                 .getSIUtcTime(); // get SI's requested time for check API's latency
 
+            print('[API FB TIME] ${stopwatch.elapsed}');
+            stopwatch.stop();
+
             return FutureBuilder(
                 future: _buildWidgetBasedOnApiType(responses, signals),
                 builder: (context, snapshot) {
+                  Stopwatch stopwatch = Stopwatch();
+                  stopwatch.start();
+
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
+                    print('[LIGHT FB TIME] ${stopwatch.elapsed}');
+                    stopwatch.stop();
                     return Column(
                       children: [
                         const CurrentTimeWidget(),
@@ -68,19 +79,22 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
   }
 
   Future<List> getApiInstances() async {
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
     await apiService.setApiKey(); // set API key
     apiService.setId(widget.id); // set API id
 
-    // final Future<RemainTimeModel?> rtFuture = apiService.getRemainTime();
-    // final Future<SignalInfoModel?> siFuture = apiService.getSignalInfo();
+    final Future<RemainTimeModel?> rtFuture = apiService.getRemainTime();
+    final Future<SignalInfoModel?> siFuture = apiService.getSignalInfo();
 
-    // final List responses = await Future.wait([rtFuture, siFuture]);
+    final List responses = await Future.wait([rtFuture, siFuture]);
 
-    RemainTimeModel? filteredRT = await apiService.getRemainTime();
-    SignalInfoModel? filteredSI = await apiService.getSignalInfo();
+    // RemainTimeModel? filteredRT = await apiService.getRemainTime();
+    // SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
-    List responses = [filteredRT, filteredSI];
-
+    // List responses = [filteredRT, filteredSI];
+    print('[API TIME] ${stopwatch.elapsed}');
+    stopwatch.stop();
     return responses;
   }
 

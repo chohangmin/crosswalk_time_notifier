@@ -54,19 +54,19 @@ class DbService {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> searchCoordinatesInRadius(
-      Database database,
-      double latitude,
-      double longitude,
-      double radius) async {
-    List<Map<String, dynamic>> result = await database.rawQuery('''
-    SELECT * FROM coordinates
-    WHERE (6371 * acos(
-      cos(radians($latitude)) * cos(radians(latitude)) *
-      cos(radians(longitude) - radians($longitude)) +
-      sin(radians($latitude)) * sin(radians(latitude))
-    )) <= $radius
-  ''');
-    return result;
-  }
+  // Future<List<Map<String, dynamic>>> searchCoordinatesInRadius(
+  //     Database database,
+  //     double latitude,
+  //     double longitude,
+  //     double radius) async {
+  //   List<Map<String, dynamic>> result = await database.rawQuery('''
+  //   SELECT * FROM coordinates
+  //   WHERE (6371 * acos(
+  //     cos(radians($latitude)) * cos(radians(latitude)) *
+  //     cos(radians(longitude) - radians($longitude)) +
+  //     sin(radians($latitude)) * sin(radians(latitude))
+  //   )) <= $radius
+  // ''');
+  //   return result;
+  // }
 }
