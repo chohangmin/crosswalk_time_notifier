@@ -2,6 +2,7 @@ import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
+import 'package:crosswalk_time_notifier/widgets/compass_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/type1_light_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/type2_light_widget.dart';
 import 'package:flutter/material.dart';
@@ -63,13 +64,20 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
                     stopwatch.stop();
                     return Column(
                       children: [
-                        const CurrentTimeWidget(),
-                        ApiTimeWidget(
-                            name: 'RT',
-                            utcTime:
-                                rtUtcTime), // for check time, run Timer widget
-                        ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
-                        snapshot.data! // Type1 or 2 widget is executed.
+                        // const CurrentTimeWidget(),
+                        // ApiTimeWidget(
+                        //     name: 'RT',
+                        //     utcTime:
+                        //         rtUtcTime), // for check time, run Timer widget
+                        // ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
+                        // // snapshot.data! // Type1 or 2 widget is executed.
+
+
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => Scaffold(body: ,)),),
+                        
+                        
+                        
+                        Flexible(child: CompassWidget(signals: signals)),
                       ],
                     );
                   }

@@ -82,8 +82,8 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
                 ? Column(
                     // if searching, searchingCompleted is T, T means there is a cross id from nearby user's location.
                     children: [
-                      TestTime(
-                          id: id), // Go to show light widget that request api servies, and must needed id.
+                      // TestTime(
+                      //     id: id), // Go to show light widget that request api servies, and must needed id.
                       RequestInfoApiWidget(id: id),
                       const Text('Success Loading')
                     ],
