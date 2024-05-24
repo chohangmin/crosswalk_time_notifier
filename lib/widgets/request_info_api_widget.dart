@@ -63,6 +63,7 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
                     print('[LIGHT FB TIME] ${stopwatch.elapsed}');
                     stopwatch.stop();
                     return Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         // const CurrentTimeWidget(),
                         // ApiTimeWidget(
@@ -72,12 +73,12 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
                         // ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
                         // // snapshot.data! // Type1 or 2 widget is executed.
 
-
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => Scaffold(body: ,)),),
-                        
-                        
-                        
-                        Flexible(child: CompassWidget(signals: signals)),
+
+                        Flexible(
+                          fit: FlexFit.loose,
+                          child: CompassWidget(signals: signals),
+                        ),
                       ],
                     );
                   }

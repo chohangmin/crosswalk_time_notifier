@@ -108,7 +108,7 @@ class _CompassWidgetState extends State<CompassWidget> {
               decoration: const BoxDecoration(shape: BoxShape.circle),
               child: Transform.rotate(
                 angle: direction * (math.pi / 180) * -1,
-                // child: Type2LightWidget(data: widget.signals),
+                child: Type2LightWidget(data: widget.signals),
               ),
             ),
           );

@@ -4,6 +4,7 @@ import 'package:crosswalk_time_notifier/services/db_service.dart';
 import 'package:crosswalk_time_notifier/widgets/request_info_api_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/test_time.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
@@ -31,46 +32,9 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
   // late TestShowLightWidget _testShowLightWidget;
   String id = '';
 
-  PopupMenuButton _createActions() {
-    // Popup menu, if _dbInit is false there is one option, Db initialize.
-    return PopupMenuButton(
-        // If _dbInit is true, there is two options, startSearching and pauseSearching.
-        elevation: 40,
-        onSelected: (value) async {
-          switch (value) {
-            case 1:
-              dbService.makeDb();
-              setState(() {
-                _dbInit = true;
-              });
-
-              break;
-            case 2:
-              _startSearching();
-              break;
-            case 3:
-              _pauseSearching();
-              break;
-            default:
-              break;
-          }
-        },
-        itemBuilder: (context) {
-          if (!_dbInit) {
-            return [
-              const PopupMenuItem(value: 1, child: Text('DB initialize.'))
-            ];
-          } else {
-            return [
-              const PopupMenuItem(value: 2, child: Text('Start Searching.')),
-              const PopupMenuItem(value: 3, child: Text('Pause Searching.'))
-            ];
-          }
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
+    debugDumpFocusTree();
     return Scaffold(
       appBar: AppBar(
         title: const Text('CrossWalk Time Notifier.'),
@@ -80,11 +44,20 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
         child: _searching
             ? (_searchingCompleted
                 ? Column(
+                    mainAxisSize: MainAxisSize.min,
+
                     // if searching, searchingCompleted is T, T means there is a cross id from nearby user's location.
                     children: [
                       // TestTime(
                       //     id: id), // Go to show light widget that request api servies, and must needed id.
-                      RequestInfoApiWidget(id: id),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: RequestInfoApiWidget(id: id),
+                      ),
+                      Builder(builder: (context) {
+                        debugDumpRenderTree();
+                        return const SizedBox.shrink();
+                      }),
                       const Text('Success Loading')
                     ],
                   )
@@ -170,5 +143,43 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
         });
       }
     });
+  }
+
+  PopupMenuButton _createActions() {
+    // Popup menu, if _dbInit is false there is one option, Db initialize.
+    return PopupMenuButton(
+        // If _dbInit is true, there is two options, startSearching and pauseSearching.
+        elevation: 40,
+        onSelected: (value) async {
+          switch (value) {
+            case 1:
+              dbService.makeDb();
+              setState(() {
+                _dbInit = true;
+              });
+
+              break;
+            case 2:
+              _startSearching();
+              break;
+            case 3:
+              _pauseSearching();
+              break;
+            default:
+              break;
+          }
+        },
+        itemBuilder: (context) {
+          if (!_dbInit) {
+            return [
+              const PopupMenuItem(value: 1, child: Text('DB initialize.'))
+            ];
+          } else {
+            return [
+              const PopupMenuItem(value: 2, child: Text('Start Searching.')),
+              const PopupMenuItem(value: 3, child: Text('Pause Searching.'))
+            ];
+          }
+        });
   }
 }
