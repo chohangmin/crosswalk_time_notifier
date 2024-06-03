@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'package:crosswalk_time_notifier/services/spatial_db_service.dart';
 
 class SearchNearbyIdWidget extends StatefulWidget {
   const SearchNearbyIdWidget({super.key});
@@ -22,6 +23,8 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
       SearchService(); // Service that searches for overlapping parts between DB data and the current location
   final DbService dbService =
       DbService(); // Service to access the DB, and retrieve all data from it
+
+  final SpatialDbService spatialDbSerive = SpatialDbService();
 
   bool _searching = false; // Flag indicating if a search is in progress
   bool _dbInit = false; // Flag indicating if the database is initialized
@@ -153,7 +156,7 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
         onSelected: (value) async {
           switch (value) {
             case 1:
-              dbService.makeDb();
+              spatialDbSerive.makeDb();
               setState(() {
                 _dbInit = true;
               });
