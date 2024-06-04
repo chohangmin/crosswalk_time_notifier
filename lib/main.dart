@@ -1,8 +1,10 @@
 import 'package:crosswalk_time_notifier/screens/show_screen.dart';
 import 'package:flutter/material.dart';
 
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // initializeSqlite();
 
   runApp(const App());
 }

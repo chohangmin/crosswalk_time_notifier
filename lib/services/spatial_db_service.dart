@@ -1,6 +1,11 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 import 'package:csv/csv.dart';
 import 'dart:math';
@@ -11,6 +16,8 @@ class SpatialDbService {
   }
 
   void makeDb() async {
+    await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
+
     String csvString = await rootBundle.loadString('data.csv');
 
     List<List<dynamic>> csvData = parseCsv(csvString);
@@ -20,28 +27,31 @@ class SpatialDbService {
 
     await deleteDatabase(path);
 
-    Database database = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute(
-          'CREATE VIRTUAL TABLE crossInfo USING rtree(id, minX, maxX, minY, maxY)');
-    });
+    final db = sqlite3.open(path);
 
-    Batch batch = database.batch();
+    db.execute('''
+      CREATE VIRTUAL TABLE crossInfo USING rtree(
+        id, 
+        minX, 
+        maxX, 
+        minY, 
+        maxY);
+    ''');
+
+    final stmt = db.prepare(
+        'INSERT INTO crossInfo (id, minX, maxX, minY, maxY) VALUES (?, ?, ?, ?, ?)');
     for (int i = 1; i < csvData.length; i++) {
       var row = csvData[i];
       String id = row[0].toString();
       double lat = double.parse(row[2].toString()) / 1e7;
       double lon = double.parse(row[3].toString()) / 1e7;
 
-      batch.insert('crossInfo', {
-        'id': id,
-        'minX': lat,
-        'maxX': lat,
-        'minY': lon,
-        'maxY': lon,
-      });
+      stmt.execute([id, lat, lat, lon, lon]);
     }
-    await batch.commit();
+    stmt.dispose();
+
+    // Close database
+    db.dispose();
   }
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -63,9 +73,9 @@ class SpatialDbService {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'crossInfo.db');
 
-    Database database = await openDatabase(path);
+    final db = sqlite3.open(path);
 
-    List<Map<String, dynamic>> result = await database.rawQuery('''
+    final ResultSet resultSet = db.select('''
       SELECT id, minX as lat, minY as lon,
       (
         (minX - ?) * (minX - ?) +
@@ -76,35 +86,17 @@ class SpatialDbService {
       LIMIT 1
     ''', [myLat, myLat, myLon, myLon]);
 
-    return result;
-  }
-
-  Future<Map<String, dynamic>> findNearest1(double myLat, double myLon) async {
-    var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
-
-    Database database = await openDatabase(path);
-
-    // 모든 시설물을 불러온 후 거리를 계산하고, 가장 가까운 시설물을 찾는 방식
-    List<Map<String, dynamic>> result = await database.rawQuery('''
-      SELECT id, minX as lat, minY as lon
-      FROM crossInfo
-    ''');
-
-    // 거리를 계산하여 가장 가까운 시설물을 찾음
-    Map<String, dynamic> nearest = result.first;
-    double minDistance =
-        calculateDistance(myLat, myLon, nearest['lat'], nearest['lon']);
-
-    for (var row in result) {
-      double distance = calculateDistance(myLat, myLon, row['lat'], row['lon']);
-      if (distance < minDistance) {
-        nearest = row;
-        minDistance = distance;
-      }
+    List<Map<String, dynamic>> result = [];
+    for (final row in resultSet) {
+      result.add({
+        'id': row['id'],
+        'lat': row['lat'],
+        'lon': row['lon'],
+        'dist': row['dist'],
+      });
     }
 
-    nearest['distance'] = minDistance; // 추가: 거리를 포함시킴
-    return nearest;
+    db.dispose();
+    return result;
   }
 }
