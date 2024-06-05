@@ -25,9 +25,9 @@ class SpatialDbService {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'crossInfo.db');
 
-    await deleteDatabase(path);
+      await deleteDatabase(path);
 
-    final db = sqlite3.open(path);
+      final db = sqlite3.open(path);
 
     db.execute('''
       CREATE VIRTUAL TABLE crossInfo USING rtree(
