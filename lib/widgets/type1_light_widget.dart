@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
-import 'package:crosswalk_time_notifier/test_widgets/traffic_info_widget.dart';
+import 'package:crosswalk_time_notifier/widgets/traffic_info_widget.dart';
 
 class Type1LightWidget extends StatelessWidget {
   final List<TrafficInfoModel> data;

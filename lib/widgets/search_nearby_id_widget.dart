@@ -24,7 +24,7 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
   final DbService dbService =
       DbService(); // Service to access the DB, and retrieve all data from it
 
-  final SpatialDbService spatialDbSerive = SpatialDbService();
+
 
   bool _searching = false; // Flag indicating if a search is in progress
   bool _dbInit = false; // Flag indicating if the database is initialized
@@ -37,7 +37,7 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    debugDumpFocusTree();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('CrossWalk Time Notifier.'),
@@ -57,10 +57,10 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
                         fit: FlexFit.loose,
                         child: RequestInfoApiWidget(id: id),
                       ),
-                      Builder(builder: (context) {
-                        debugDumpRenderTree();
-                        return const SizedBox.shrink();
-                      }),
+                      // Builder(builder: (context) {
+                      //   debugDumpRenderTree();
+                      //   return const SizedBox.shrink();
+                      // }),
                       const Text('Success Loading')
                     ],
                   )
@@ -156,7 +156,7 @@ class _SearchNearbyIdWidgetState extends State<SearchNearbyIdWidget> {
         onSelected: (value) async {
           switch (value) {
             case 1:
-              spatialDbSerive.makeDb();
+              dbService.makeDb();
               setState(() {
                 _dbInit = true;
               });

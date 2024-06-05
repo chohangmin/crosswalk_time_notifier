@@ -7,6 +7,9 @@ class SearchService {
       double radius,
       double userLatitude,
       double userLongitude) {
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
+
     List<Map<String, dynamic>> filteredCoordinates = [];
     // 결과 필터링: 실제로 사용자에게 보여줄 범위 내의 좌표만을 필터링
     for (var coordinate in coordinates) {
@@ -22,6 +25,9 @@ class SearchService {
         filteredCoordinates.add(coordinate);
       }
     }
+
+    print('[SS Time] ${stopwatch.elapsed}');
+    stopwatch.stop();
     return filteredCoordinates;
   }
 

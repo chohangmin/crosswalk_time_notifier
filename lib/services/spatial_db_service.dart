@@ -70,6 +70,9 @@ class SpatialDbService {
 
   Future<List<Map<String, dynamic>>> findIdsWithinArea(
       double myLat, double myLon, double length) async {
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
+
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'crossInfo.db');
 
@@ -83,22 +86,24 @@ class SpatialDbService {
         2 /
         calculateDistance(myLat, myLon, myLat, myLon + myLon < 0 ? 1 : -1);
 
-    double lat1 = myLat - myLat < 0 ? 1 : -1 * latDiff;
-    double lon1 = myLon - myLon < 0 ? 1 : -1 * lonDiff;
+    double lat1 = myLat - (myLat < 0 ? 1 : -1 * latDiff);
+    double lon1 = myLon - (myLon < 0 ? 1 : -1 * lonDiff);
 
-    double lat2 = myLat + myLat < 0 ? 1 : -1 * latDiff;
-    double lon2 = myLon + myLon < 0 ? 1 : -1 * lonDiff;
+    double lat2 = myLat + (myLat < 0 ? 1 : -1 * latDiff);
+    double lon2 = myLon + (myLon < 0 ? 1 : -1 * lonDiff);
 
     final ResultSet resultSet = db.select('''
       SELECT * FROM crossInfo
       WHERE minX >= ? AND maxX <= ? AND minY >= ? AND maxY <= ?
-    ''', [lat1, lat2, lon1, lon2]);
+    ''', [lat2, lat1, lon2, lon1]);
 
-    print('findIds $lat1 $lat2 $lon1 $lon2');
+    // print('diff $latDiff $lonDiff');
+
+    // print('Lat and Lon $myLat $myLon');
+    // print('findIds $lat1 $lat2 $lon1 $lon2');
 
     List<Map<String, dynamic>> results = [];
     for (final Row row in resultSet) {
-      print('check add results');
       results.add({
         'id': row['id'],
         'minX': row['minX'],
@@ -109,6 +114,9 @@ class SpatialDbService {
     }
 
     db.dispose();
+
+    print('[SDB Time] ${stopwatch.elapsed}');
+    stopwatch.stop();
 
     return results;
   }

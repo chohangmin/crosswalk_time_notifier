@@ -34,7 +34,7 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    debugDumpFocusTree();
+    // debugDumpFocusTree();
     return Scaffold(
       appBar: AppBar(
         title: const Text('CrossWalk Time Notifier.'),
@@ -54,10 +54,10 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
                         fit: FlexFit.loose,
                         child: RequestInfoApiWidget(id: id),
                       ),
-                      Builder(builder: (context) {
-                        debugDumpRenderTree();
-                        return const SizedBox.shrink();
-                      }),
+                      // Builder(builder: (context) {
+                      //   debugDumpRenderTree();
+                      //   return const SizedBox.shrink();
+                      // }),
                       const Text('Success Loading')
                     ],
                   )
@@ -82,8 +82,6 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
   }
 
   void _startSearching() async {
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
     setState(() {
       if (_searchingCompleted == false) {
         _searching = true;
@@ -93,24 +91,20 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
       }
     });
 
-    int i = 0;
-
-    Timer.periodic(const Duration(seconds: 4), (timer) async {
-      print(i++);
-
+    Timer.periodic(const Duration(seconds: 6), (timer) async {
       Position? position = await geolocatorService
           .getCurrentPosition(); // 1. Find my location latitude, longitude.
       if (position == null) {
         throw Exception('Failed to retrieve current position.');
       }
 
-      spatialDbSerive.printDb();
+      // spatialDbSerive.printDb();
 
       List<Map<String, dynamic>> results =
           await spatialDbSerive.findIdsWithinArea(
         position.latitude,
         position.longitude,
-        100000,
+        10000,
       ); // 1km
 
       if (results.isEmpty) {
@@ -132,9 +126,6 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
         });
         // Navigator.of(context).push(
         //     MaterialPageRoute(builder: (context) => _testShowLightWidget));
-
-        print('[TIMET] ${stopwatch.elapsed}');
-        stopwatch.stop();
       } else {
         setState(() {
           _searchingState =

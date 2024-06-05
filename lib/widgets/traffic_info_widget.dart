@@ -19,10 +19,12 @@ class TrafficInfo extends StatefulWidget {
 
 class _TrafficInfoState extends State<TrafficInfo> {
   late Timer _timer;
+  int? _remainingTime;
   @override
   void initState() {
     super.initState();
-    if (widget.time != null) {
+    _remainingTime = widget.time?.toInt();
+    if (_remainingTime != null) {
       startTimer();
     }
   }
@@ -30,8 +32,8 @@ class _TrafficInfoState extends State<TrafficInfo> {
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (widget.time! > 0) {
-          widget.time = widget.time! - 10;
+        if (_remainingTime! > 0) {
+          _remainingTime = _remainingTime! - 20;
         } else {
           timer.cancel();
           if (widget.isMovementAllowed != null) {
@@ -44,15 +46,13 @@ class _TrafficInfoState extends State<TrafficInfo> {
 
   @override
   void dispose() {
-    _timer.cancel;
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.name);
-    print('${widget.isMovementAllowed}');
-    print('${widget.time}');
+    print('[${widget.name}] ${widget.isMovementAllowed} $_remainingTime');
     return Container(
       width: 50,
       height: 50,
@@ -67,7 +67,8 @@ class _TrafficInfoState extends State<TrafficInfo> {
           Center(
             child: RichText(
               text: TextSpan(
-                text: '${widget.name} \n ${((widget.time ?? 0) ~/ 10).toInt()}',
+                text:
+                    '${widget.name} \n ${((_remainingTime ?? 0) ~/ 10).toInt()}',
                 style: const TextStyle(
                   fontSize: 10,
                 ),

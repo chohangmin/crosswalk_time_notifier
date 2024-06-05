@@ -10,17 +10,13 @@ import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
 import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 
-class RequestInfoApiWidget extends StatefulWidget {
+class RequestInfoApiWidget extends StatelessWidget {
   final String id;
 
-  const RequestInfoApiWidget({super.key, required this.id});
+   RequestInfoApiWidget({super.key, required this.id});
 
-  @override
-  State<RequestInfoApiWidget> createState() => _RequestInfoApiWidgetState();
-}
-
-class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
   ApiService apiService = ApiService();
+
   LightService lightService = LightService();
 
   @override
@@ -28,8 +24,8 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
     return FutureBuilder(
         future: getApiInstances(),
         builder: (context, snapshot) {
-          Stopwatch stopwatch = Stopwatch();
-          stopwatch.start();
+          
+ 
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
@@ -39,38 +35,35 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
             List responses = snapshot.data!;
             lightService.setApiInstances(
                 responses[0], responses[1]); // index 0 is RT, index 1 is SI
-            lightService.printApiInstances();
+            // lightService.printApiInstances();
             final signals = lightService.getSignalLists();
             final rtUtcTime =
                 lightService.getRTUtcTime(); // get RT's requested time
             final siUtcTime = lightService
                 .getSIUtcTime(); // get SI's requested time for check API's latency
 
-            print('[API FB TIME] ${stopwatch.elapsed}');
-            stopwatch.stop();
+           
 
             return FutureBuilder(
                 future: _buildWidgetBasedOnApiType(responses, signals),
                 builder: (context, snapshot) {
-                  Stopwatch stopwatch = Stopwatch();
-                  stopwatch.start();
-
+              
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    print('[LIGHT FB TIME] ${stopwatch.elapsed}');
-                    stopwatch.stop();
+                  
+                 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // const CurrentTimeWidget(),
-                        // ApiTimeWidget(
-                        //     name: 'RT',
-                        //     utcTime:
-                        //         rtUtcTime), // for check time, run Timer widget
-                        // ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
+                        const CurrentTimeWidget(),
+                        ApiTimeWidget(
+                            name: 'RT',
+                            utcTime:
+                                rtUtcTime), // for check time, run Timer widget
+                        ApiTimeWidget(name: 'SI', utcTime: siUtcTime),
                         // // snapshot.data! // Type1 or 2 widget is executed.
 
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => Scaffold(body: ,)),),
@@ -88,10 +81,10 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
   }
 
   Future<List> getApiInstances() async {
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
+
+
     await apiService.setApiKey(); // set API key
-    apiService.setId(widget.id); // set API id
+    apiService.setId(id); // set API id
 
     final Future<RemainTimeModel?> rtFuture = apiService.getRemainTime();
     final Future<SignalInfoModel?> siFuture = apiService.getSignalInfo();
@@ -102,8 +95,8 @@ class _RequestInfoApiWidgetState extends State<RequestInfoApiWidget> {
     // SignalInfoModel? filteredSI = await apiService.getSignalInfo();
 
     // List responses = [filteredRT, filteredSI];
-    print('[API TIME] ${stopwatch.elapsed}');
-    stopwatch.stop();
+  
+
     return responses;
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
-import 'package:crosswalk_time_notifier/test_widgets/traffic_info_widget.dart';
+import 'package:crosswalk_time_notifier/widgets/traffic_info_widget.dart';
 
 class Type2LightWidget extends StatelessWidget {
   final List<TrafficInfoModel> data;
@@ -8,11 +8,8 @@ class Type2LightWidget extends StatelessWidget {
   const Type2LightWidget({super.key, required this.data});
   @override
   Widget build(BuildContext context) {
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start(); // Stopwatch 시작
 
-    print("[TYPE] 2");
-    print(data);
+
 
     Widget widget = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -72,8 +69,7 @@ class Type2LightWidget extends StatelessWidget {
       ],
     );
 
-    stopwatch.stop();
-    print("[TYPE2 TIME] ${stopwatch.elapsed}");
+
 
     return widget;
 
