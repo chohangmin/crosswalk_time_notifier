@@ -25,9 +25,9 @@ class SpatialDbService {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'crossInfo.db');
 
-      await deleteDatabase(path);
+    await deleteDatabase(path);
 
-      final db = sqlite3.open(path);
+    final db = sqlite3.open(path);
 
     db.execute('''
       CREATE VIRTUAL TABLE crossInfo USING rtree(
@@ -94,8 +94,11 @@ class SpatialDbService {
       WHERE minX >= ? AND maxX <= ? AND minY >= ? AND maxY <= ?
     ''', [lat1, lat2, lon1, lon2]);
 
+    print('findIds $lat1 $lat2 $lon1 $lon2');
+
     List<Map<String, dynamic>> results = [];
     for (final Row row in resultSet) {
+      print('check add results');
       results.add({
         'id': row['id'],
         'minX': row['minX'],
@@ -108,6 +111,18 @@ class SpatialDbService {
     db.dispose();
 
     return results;
+  }
+
+  Future<void> printDb() async {
+    var databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'crossInfo.db');
+
+    final db = sqlite3.open(path);
+
+    var testValues = db.select("SELECT * FROM crossInfo");
+    for (var row in testValues) {
+      print('Index: ${row['id']}, minX: ${row['minX']}, maxX: ${row['maxX']}');
+    }
   }
 
   Future<List<Map<String, dynamic>>> findNearest(

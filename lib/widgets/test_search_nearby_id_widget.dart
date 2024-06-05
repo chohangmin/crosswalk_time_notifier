@@ -104,11 +104,13 @@ class _TestSearchNearbyIdWidgetState extends State<TestSearchNearbyIdWidget> {
         throw Exception('Failed to retrieve current position.');
       }
 
+      spatialDbSerive.printDb();
+
       List<Map<String, dynamic>> results =
           await spatialDbSerive.findIdsWithinArea(
         position.latitude,
         position.longitude,
-        1000,
+        100000,
       ); // 1km
 
       if (results.isEmpty) {
