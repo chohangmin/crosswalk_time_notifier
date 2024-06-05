@@ -68,6 +68,48 @@ class SpatialDbService {
     return R * c; // 미터 단위 거리 반환
   }
 
+  Future<List<Map<String, dynamic>>> findIdsWithinArea(
+      double myLat, double myLon, double length) async {
+    var databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'crossInfo.db');
+
+    final db = sqlite3.open(path);
+
+    double latDiff = length /
+        2 /
+        calculateDistance(myLat, myLon, myLat + myLat < 0 ? 1 : -1, myLon);
+
+    double lonDiff = length /
+        2 /
+        calculateDistance(myLat, myLon, myLat, myLon + myLon < 0 ? 1 : -1);
+
+    double lat1 = myLat - myLat < 0 ? 1 : -1 * latDiff;
+    double lon1 = myLon - myLon < 0 ? 1 : -1 * lonDiff;
+
+    double lat2 = myLat + myLat < 0 ? 1 : -1 * latDiff;
+    double lon2 = myLon + myLon < 0 ? 1 : -1 * lonDiff;
+
+    final ResultSet resultSet = db.select('''
+      SELECT * FROM crossInfo
+      WHERE minX >= ? AND maxX <= ? AND minY >= ? AND maxY <= ?
+    ''', [lat1, lat2, lon1, lon2]);
+
+    List<Map<String, dynamic>> results = [];
+    for (final Row row in resultSet) {
+      results.add({
+        'id': row['id'],
+        'minX': row['minX'],
+        'maxX': row['maxX'],
+        'minY': row['minY'],
+        'maxY': row['maxY'],
+      });
+    }
+
+    db.dispose();
+
+    return results;
+  }
+
   Future<List<Map<String, dynamic>>> findNearest(
       double myLat, double myLon) async {
     var databasePath = await getDatabasesPath();
