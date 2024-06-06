@@ -1,8 +1,8 @@
 import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:crosswalk_time_notifier/services/search_service.dart';
 import 'package:crosswalk_time_notifier/services/db_service.dart';
-import 'package:crosswalk_time_notifier/widgets/request_info_api_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/test_time.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/request_info_api_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/test_time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
-import 'package:crosswalk_time_notifier/widgets/type2_light_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/type2_light_widget.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 
 import 'package:permission_handler/permission_handler.dart';

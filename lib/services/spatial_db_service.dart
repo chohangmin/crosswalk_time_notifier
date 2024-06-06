@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:crosswalk_time_notifier/models/cross_map_model.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -11,26 +12,21 @@ import 'package:csv/csv.dart';
 import 'dart:math';
 
 class SpatialDbService {
-  List<List<dynamic>> parseCsv(String csvString) {
-    return const CsvToListConverter().convert(csvString);
-  }
-
-  void makeDb() async {
+  void makeRtreeDb(List<CrossMapModel> data) async {
     await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
 
-    String csvString = await rootBundle.loadString('data.csv');
+    var rtreeDbPath, infoDbPath = await getDatabasesPath();
+    String rtreePath = join(rtreeDbPath, 'rtree.db');
+    String infoPath = join(infoDbPath, 'info.db');
 
-    List<List<dynamic>> csvData = parseCsv(csvString);
+    await deleteDatabase(rtreePath);
+    await deleteDatabase(infoPath);
 
-    var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
+    final rtreeDb = sqlite3.open(rtreePath);
+    final infoDb = sqlite3.open(infoPath);
 
-    await deleteDatabase(path);
-
-    final db = sqlite3.open(path);
-
-    db.execute('''
-      CREATE VIRTUAL TABLE crossInfo USING rtree(
+    rtreeDb.execute('''
+      CREATE VIRTUAL TABLE rtreeDb USING rtree(
         id, 
         minX, 
         maxX, 
@@ -38,20 +34,29 @@ class SpatialDbService {
         maxY);
     ''');
 
-    final stmt = db.prepare(
-        'INSERT INTO crossInfo (id, minX, maxX, minY, maxY) VALUES (?, ?, ?, ?, ?)');
-    for (int i = 1; i < csvData.length; i++) {
-      var row = csvData[i];
-      String id = row[0].toString();
-      double lat = double.parse(row[2].toString()) / 1e7;
-      double lon = double.parse(row[3].toString()) / 1e7;
+    infoDb.execute('''
+      CREATE TABLE infoDb USING (
+        id, 
+        name, 
+        , 
+        , 
+        );
+    ''');
+
+    final stmt = rtreeDb.prepare(
+        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY) VALUES (?, ?, ?, ?, ?)');
+    for (int i = 0; i < data.length; i++) {
+      var row = data[i];
+      int id = row.id;
+      double lat = row.mapLat / 1e7;
+      double lon = row.mapLon / 1e7;
 
       stmt.execute([id, lat, lat, lon, lon]);
     }
     stmt.dispose();
 
     // Close database
-    db.dispose();
+    rtreeDb.dispose();
   }
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -74,7 +79,7 @@ class SpatialDbService {
     stopwatch.start();
 
     var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
+    String path = join(databasePath, 'rtreeDb.db');
 
     final db = sqlite3.open(path);
 
@@ -93,7 +98,7 @@ class SpatialDbService {
     double lon2 = myLon + (myLon < 0 ? 1 : -1 * lonDiff);
 
     final ResultSet resultSet = db.select('''
-      SELECT * FROM crossInfo
+      SELECT * FROM rtreeDb
       WHERE minX >= ? AND maxX <= ? AND minY >= ? AND maxY <= ?
     ''', [lat2, lat1, lon2, lon1]);
 
@@ -123,45 +128,13 @@ class SpatialDbService {
 
   Future<void> printDb() async {
     var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
+    String path = join(databasePath, 'rtreeDb.db');
 
     final db = sqlite3.open(path);
 
-    var testValues = db.select("SELECT * FROM crossInfo");
+    var testValues = db.select("SELECT * FROM rtreeDb");
     for (var row in testValues) {
       print('Index: ${row['id']}, minX: ${row['minX']}, maxX: ${row['maxX']}');
     }
-  }
-
-  Future<List<Map<String, dynamic>>> findNearest(
-      double myLat, double myLon) async {
-    var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
-
-    final db = sqlite3.open(path);
-
-    final ResultSet resultSet = db.select('''
-      SELECT id, minX as lat, minY as lon,
-      (
-        (minX - ?) * (minX - ?) +
-        (minY - ?) * (minY - ?)
-      ) as dist
-      FROM crossInfo
-      ORDER BY dist ASC
-      LIMIT 1
-    ''', [myLat, myLat, myLon, myLon]);
-
-    List<Map<String, dynamic>> result = [];
-    for (final row in resultSet) {
-      result.add({
-        'id': row['id'],
-        'lat': row['lat'],
-        'lon': row['lon'],
-        'dist': row['dist'],
-      });
-    }
-
-    db.dispose();
-    return result;
   }
 }

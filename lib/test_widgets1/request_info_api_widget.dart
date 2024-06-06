@@ -2,12 +2,12 @@ import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/services/light_service.dart';
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
-import 'package:crosswalk_time_notifier/widgets/compass_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/type1_light_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/type2_light_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/compass_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/type1_light_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/type2_light_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:crosswalk_time_notifier/widgets/api_time_widget.dart';
-import 'package:crosswalk_time_notifier/widgets/current_time_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/api_time_widget.dart';
+import 'package:crosswalk_time_notifier/test_widgets1/current_time_widget.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 
 class RequestInfoApiWidget extends StatelessWidget {
