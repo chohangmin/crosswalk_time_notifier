@@ -17,7 +17,7 @@ class DbFetchLoadWidget extends StatelessWidget {
           await dbApiService.setApiKey();
           List<CrossMapModel> crossMaps = await dbApiService.getCrossMap();
 
-          spatialDbService.makeDb();
+          spatialDbService.makeRtreeDb(crossMaps);
           
         },
         child: const Text('Data Fetch & Load'),
