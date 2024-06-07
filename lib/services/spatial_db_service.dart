@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:crosswalk_time_notifier/models/cross_map_model.dart';
+import 'package:crosswalk_time_notifier/services/locator_service.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -17,41 +18,88 @@ class SpatialDbService {
 
     var rtreeDbPath, infoDbPath = await getDatabasesPath();
     String rtreePath = join(rtreeDbPath, 'rtree.db');
-    String infoPath = join(infoDbPath, 'info.db');
 
     await deleteDatabase(rtreePath);
-    await deleteDatabase(infoPath);
 
     final rtreeDb = sqlite3.open(rtreePath);
-    final infoDb = sqlite3.open(infoPath);
 
     rtreeDb.execute('''
       CREATE VIRTUAL TABLE rtreeDb USING rtree(
         id, 
-        minX, 
-        maxX, 
-        minY, 
-        maxY);
-    ''');
+        minX, maxX, 
+        minY, maxY,
+        +name TEXT,
+        +nLon REAL, +nLat REAL,
+        +eLon REAL, +eLat REAL,
+        +sLon REAL, +sLat REAL,
+        +wLon REAL, +wLat REAL,
+        +neLon REAL, +neLat REAL,
+        +seLon REAL, +seLat REAL,
+        +swLon REAL, +swLat REAL,
+        +nwLon REAL, +nwLat REAL,
+        )''');
 
-    infoDb.execute('''
-      CREATE TABLE infoDb USING (
-        id, 
-        name, 
-        , 
-        , 
-        );
-    ''');
+    double r = 250;
+
+    double diagR = r / sqrt(2);
 
     final stmt = rtreeDb.prepare(
-        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY) VALUES (?, ?, ?, ?, ?)');
+        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY, nLon, nLat, eLon, eLat, sLon, sLat, wLon, wLat, neLon, neLat, seLon, seLat, swLon, swLat, nwLon, nwLat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     for (int i = 0; i < data.length; i++) {
       var row = data[i];
       int id = row.id;
-      double lat = row.mapLat / 1e7;
       double lon = row.mapLon / 1e7;
+      double lat = row.mapLat / 1e7;
 
-      stmt.execute([id, lat, lat, lon, lon]);
+      double latDiff =
+          r / calculateDistance(lat, lon, lat + lat < 0 ? 1 : -1, lon);
+      double lonDiff =
+          r / calculateDistance(lat, lon, lat, lon + lon < 0 ? 1 : -1);
+      double latDiagDiff =
+          diagR / calculateDistance(lat, lon, lat + lat < 0 ? 1 : -1, lon);
+      double lonDiagDiff =
+          diagR / calculateDistance(lat, lon, lat, lon + lon < 0 ? 1 : -1);
+
+      double nLon = lon;
+      double nLat = lat - (lat < 0 ? 1 : -1 * latDiff);
+      double eLon = lon - (lon < 0 ? 1 : -1 * lonDiff);
+      double eLat = lat;
+      double sLon = lon;
+      double sLat = lat + (lat < 0 ? 1 : -1 * latDiff);
+      double wLon = lon + (lon < 0 ? 1 : -1 * lonDiff);
+      double wLat = lat;
+      double neLon = lon - (lon < 0 ? 1 : -1 * lonDiagDiff);
+      double neLat = lat + (lat < 0 ? 1 : -1 * latDiagDiff);
+      double seLon = lon - (lon < 0 ? 1 : -1 * lonDiagDiff);
+      double seLat = lat - (lat < 0 ? 1 : -1 * latDiagDiff);
+      double swLon = lon + (lon < 0 ? 1 : -1 * lonDiagDiff);
+      double swLat = lat - (lat < 0 ? 1 : -1 * latDiagDiff);
+      double nwLon = lon + (lon < 0 ? 1 : -1 * lonDiagDiff);
+      double nwLat = lat + (lat < 0 ? 1 : -1 * latDiagDiff);
+
+      stmt.execute([
+        id,
+        lat,
+        lat,
+        lon,
+        lon,
+        nLon,
+        nLat,
+        eLon,
+        eLat,
+        sLon,
+        sLat,
+        wLon,
+        wLat,
+        neLon,
+        neLat,
+        seLon,
+        seLat,
+        swLon,
+        swLat,
+        nwLon,
+        nwLat,
+      ]);
     }
     stmt.dispose();
 
