@@ -13,6 +13,58 @@ import 'package:csv/csv.dart';
 import 'dart:math';
 
 class SpatialDbService {
+  List<List<dynamic>> parseCsv(String csvString) {
+    return const CsvToListConverter().convert(csvString);
+  }
+
+  void makeDb() async {
+    await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
+
+    String csvString = await rootBundle.loadString('data.csv');
+
+    List<List<dynamic>> csvData = parseCsv(csvString);
+
+    var databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'crossInfo.db');
+
+  await deleteDatabase(path);
+
+    final rtreeDb = sqlite3.open(path);
+
+    rtreeDb.execute('''
+      CREATE VIRTUAL TABLE rtreeDb USING rtree(
+        id, 
+        minX, maxX, 
+        minY, maxY,
+        +name TEXT
+        )''');
+
+    final stmt = rtreeDb.prepare(
+        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY, name) VALUES (?, ?, ?, ?, ?, ?)');
+    for (int i = 0; i < csvData.length; i++) {
+
+      var row = csvData[i];
+
+      int id = int.parse(row[0]);
+      String name = row[1];
+      double lat = double.parse(row[2].toString()) / 1e7;
+      double lon = double.parse(row[3].toString()) / 1e7;
+
+      stmt.execute([
+        id,
+        lat,
+        lat,
+        lon,
+        lon,
+        name,
+      ]);
+    }
+    stmt.dispose();
+
+    // Close database
+    rtreeDb.dispose();
+  }
+
   void makeRtreeDb(List<CrossMapModel> data) async {
     await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
 
@@ -32,7 +84,7 @@ class SpatialDbService {
         )''');
 
     final stmt = rtreeDb.prepare(
-        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY, TEXT) VALUES (?, ?, ?, ?, ?, ?)');
+        'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY, name) VALUES (?, ?, ?, ?, ?, ?)');
     for (int i = 0; i < data.length; i++) {
       var row = data[i];
       int id = row.id;

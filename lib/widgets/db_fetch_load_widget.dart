@@ -12,13 +12,15 @@ class DbFetchLoadWidget extends StatelessWidget {
     return Scaffold(
       body: ElevatedButton(
         onPressed: () async {
-          DbApiService dbApiService = DbApiService();
+          // DbApiService dbApiService = DbApiService();
           SpatialDbService spatialDbService = SpatialDbService();
 
-          await dbApiService.setApiKey();
-          List<CrossMapModel> crossMaps = await dbApiService.getCrossMap();
+          // await dbApiService.setApiKey();
+          // List<CrossMapModel> crossMaps = await dbApiService.getCrossMap();
 
-          spatialDbService.makeRtreeDb(crossMaps);
+          // spatialDbService.makeRtreeDb(crossMaps);
+
+          spatialDbService.makeDb();
 
           const MainScreen();
         },
