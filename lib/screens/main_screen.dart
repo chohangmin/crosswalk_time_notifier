@@ -43,11 +43,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
             onPressed: () {
               _positionStreamStarted = !_positionStreamStarted;
               _toggleListening();
+              setState(() {});
             },
             style: ButtonStyle(
               backgroundColor: _determineButtonColor(),
@@ -63,6 +66,31 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  Future<bool> _handlePermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return false;
+    }
+
+    permission = await _geolocatorPlatform.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await _geolocatorPlatform.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return false;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    }
+
+    return true;
+  }
+
   bool _isListening() => !(_positionStreamSubscription == null ||
       _positionStreamSubscription!.isPaused);
 
@@ -72,7 +100,15 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _toggleServiceStatusStream() {
+  void _toggleServiceStatusStream() async {
+    bool permission;
+    permission = await _handlePermission();
+
+    if (!permission) {
+      print('Error not permission');
+      return;
+    }
+
     if (_serviceStatusStreamSubscription == null) {
       final serviceStatusStream = _geolocatorPlatform.getServiceStatusStream();
       _serviceStatusStreamSubscription =
@@ -108,17 +144,16 @@ class _MainScreenState extends State<MainScreen> {
         results = await _spatialDbService.findIdsWithinArea(
             position.latitude, position.longitude, 5000);
 
-        for (var result in results) {
-          print('[Test] ${result['id']}');
-        }
+        // for (var result in results) {
+        //   print('[Test] ${result['id']}');
+        // }
 
         if (results.length == 1) {
           int id = results[0]['id'];
 
-          print(id);
-
           if (_id != id) {
-            // _apiService.setId(id.toString());
+            _apiService.setId(id.toString());
+            
 
             setState(() {
               _id = id;

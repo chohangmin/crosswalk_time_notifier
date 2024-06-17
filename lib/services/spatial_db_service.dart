@@ -25,7 +25,7 @@ class SpatialDbService {
     List<List<dynamic>> csvData = parseCsv(csvString);
 
     var databasePath = await getDatabasesPath();
-    String path = join(databasePath, 'crossInfo.db');
+    String path = join(databasePath, 'rtreeDb.db');
 
   await deleteDatabase(path);
 
@@ -41,11 +41,11 @@ class SpatialDbService {
 
     final stmt = rtreeDb.prepare(
         'INSERT INTO rtreeDb (id, minX, maxX, minY, maxY, name) VALUES (?, ?, ?, ?, ?, ?)');
-    for (int i = 0; i < csvData.length; i++) {
+    for (int i = 1; i < csvData.length; i++) {
 
       var row = csvData[i];
 
-      int id = int.parse(row[0]);
+      int id = int.parse(row[0].toString());
       String name = row[1];
       double lat = double.parse(row[2].toString()) / 1e7;
       double lon = double.parse(row[3].toString()) / 1e7;
@@ -69,7 +69,7 @@ class SpatialDbService {
     await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
 
     var rtreeDbPath = await getDatabasesPath();
-    String rtreePath = join(rtreeDbPath, 'rtree.db');
+    String rtreePath = join(rtreeDbPath, 'rtreeDb.db');
 
     await deleteDatabase(rtreePath);
 
