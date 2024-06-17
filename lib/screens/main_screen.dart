@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
+import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
+import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +24,11 @@ class _MainScreenState extends State<MainScreen> {
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool _positionStreamStarted = false;
   int _id = -1;
+  TrafficInfoModel lightValue = TrafficInfoModel(
+      name: 'Light Value', isMovementAllowed: null, time: null);
+
+  TrafficInfoModel defaultValue =
+      TrafficInfoModel(name: 'Default', isMovementAllowed: null, time: null);
 
   @override
   void initState() {
@@ -60,7 +68,11 @@ class _MainScreenState extends State<MainScreen> {
                 ? const Icon(Icons.play_arrow)
                 : const Icon(Icons.pause),
           ),
-          // const LightWidget(),
+          LightWidget(
+            name: lightValue.name,
+            isMovementAllowed: lightValue.isMovementAllowed,
+            time: lightValue.time,
+          )
         ],
       ),
     );
@@ -153,12 +165,31 @@ class _MainScreenState extends State<MainScreen> {
 
           if (_id != id) {
             _apiService.setId(id.toString());
-            
+
+            final Future<RemainTimeModel?> rtFuture =
+                _apiService.getRemainTime();
+            final Future<SignalInfoModel?> siFuture =
+                _apiService.getSignalInfo();
+
+            final List responses = await Future.wait([siFuture, rtFuture]);
+
+            TrafficInfoModel testValue = TrafficInfoModel(
+                name: 'Test S E',
+                isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
+                time: responses[1].sePdsgStat);
+
+            print('[BOOL] ${responses[0].sePdsgStat}');
+            print('[TIME] ${responses[1].sePdsgStat}');
 
             setState(() {
               _id = id;
+              lightValue = testValue;
             });
           }
+        } else {
+          setState(() {
+            lightValue = defaultValue;
+          });
         }
       });
       _positionStreamSubscription?.pause();
@@ -173,5 +204,16 @@ class _MainScreenState extends State<MainScreen> {
         _positionStreamSubscription!.pause();
       }
     });
+  }
+
+  bool? changeSigToBool(String? SigState) {
+    if (SigState == 'protected-Movement-Allowed' ||
+        SigState == 'permissive-Movement-Allowed') {
+      return true;
+    } else if (SigState == 'stop-And-Remain') {
+      return false;
+    }
+
+    return null;
   }
 }
