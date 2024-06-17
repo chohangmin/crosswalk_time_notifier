@@ -111,6 +111,7 @@ class SpatialDbService {
         'maxX': row['maxX'],
         'minY': row['minY'],
         'maxY': row['maxY'],
+        'name': row['name'],
       });
     }
 

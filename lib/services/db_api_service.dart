@@ -22,6 +22,7 @@ class DbApiService {
   Future<List<CrossMapModel>> getCrossMap() async {
     List<CrossMapModel> crossMapInstances = [];
     final url = Uri.parse('$crossMapUrl?apiKey=$apiKey');
+    print(url);
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

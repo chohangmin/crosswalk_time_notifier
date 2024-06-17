@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:crosswalk_time_notifier/services/api_service.dart';
 import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:crosswalk_time_notifier/services/spatial_db_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,9 +15,29 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
+  final SpatialDbService _spatialDbService = SpatialDbService();
+  final ApiService _apiService = ApiService();
   StreamSubscription<Position>? _positionStreamSubscription;
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool _positionStreamStarted = false;
+  int _id = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _toggleServiceStatusStream();
+    _apiService.setApiKey();
+  }
+
+  @override
+  void dispose() {
+    if (_positionStreamSubscription != null) {
+      _positionStreamSubscription!.cancel();
+      _positionStreamSubscription = null;
+    }
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
               _positionStreamStarted = !_positionStreamStarted;
               _toggleListening();
             },
-            style: const ButtonStyle(
+            style: ButtonStyle(
               backgroundColor: _determineButtonColor(),
             ),
             child: (_positionStreamSubscription == null ||
@@ -36,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
                 ? const Icon(Icons.play_arrow)
                 : const Icon(Icons.pause),
           ),
-          const LightWidget(),
+          // const LightWidget(),
         ],
       ),
     );
@@ -45,8 +66,10 @@ class _MainScreenState extends State<MainScreen> {
   bool _isListening() => !(_positionStreamSubscription == null ||
       _positionStreamSubscription!.isPaused);
 
-  Color _determineButtonColor() {
-    return _isListening() ? Colors.green : Colors.red;
+  WidgetStateProperty<Color?> _determineButtonColor() {
+    return WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      return _isListening() ? Colors.green : Colors.red;
+    });
   }
 
   void _toggleServiceStatusStream() {
@@ -79,7 +102,30 @@ class _MainScreenState extends State<MainScreen> {
       _positionStreamSubscription = positionStream.handleError((error) {
         _positionStreamSubscription?.cancel();
         _positionStreamSubscription = null;
-      }).listen((position) => );
+      }).listen((position) async {
+        List<Map<String, dynamic>> results = [];
+
+        results = await _spatialDbService.findIdsWithinArea(
+            position.latitude, position.longitude, 5000);
+
+        for (var result in results) {
+          print('[Test] ${result['id']}');
+        }
+
+        if (results.length == 1) {
+          int id = results[0]['id'];
+
+          print(id);
+
+          if (_id != id) {
+            // _apiService.setId(id.toString());
+
+            setState(() {
+              _id = id;
+            });
+          }
+        }
+      });
       _positionStreamSubscription?.pause();
     }
     setState(() {
