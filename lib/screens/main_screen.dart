@@ -68,6 +68,13 @@ class _MainScreenState extends State<MainScreen> {
                 ? const Icon(Icons.play_arrow)
                 : const Icon(Icons.pause),
           ),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _id = -1;
+                });
+              },
+              child: const Icon(Icons.ac_unit)),
           LightWidget(
             name: lightValue.name,
             isMovementAllowed: lightValue.isMovementAllowed,

@@ -27,22 +27,19 @@ class _LightWidgetState extends State<LightWidget> {
   @override
   void initState() {
     super.initState();
-    _remainTime = widget.time?.toInt();
-    if (_remainTime != null) {
-      startTimer();
-    }
+    // _remainTime = widget.time?.toInt();
   }
 
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_remainTime! >= 0) {
-          _remainTime = _remainTime! - 1;
+        if (_remainTime! > 0) {
+          _remainTime = _remainTime! - 20;
         } else {
           _timer.cancel();
-          if (widget.isMovementAllowed != null) {
-            widget.isMovementAllowed = !widget.isMovementAllowed!;
-          }
+          print('[end]');
+          widget.isMovementAllowed = !widget.isMovementAllowed!;
+          _remainTime = 0;
         }
       });
     });
@@ -55,7 +52,31 @@ class _LightWidgetState extends State<LightWidget> {
   }
 
   @override
+  void didUpdateWidget(LightWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //     if (widget.time != oldWidget.time || widget.isMovementAllowed != oldWidget.isMovementAllowed) {
+    //   resetTimer();
+    // }
+
+    print('[UPDATE]');
+    if (widget.name == 'Default') {
+      dispose();
+    }
+
+    setState(() {
+      _remainTime = widget.time?.toInt();
+      print('[CHECK remain Time] $_remainTime');
+      if (_remainTime != null) {
+        startTimer();
+        print('[START]');
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // print(
+    //     '[TEST Light widget value] ${widget.name} ${widget.isMovementAllowed} ${widget.time} TIME : $_remainTime');
     return Container(
       width: 50,
       height: 50,
