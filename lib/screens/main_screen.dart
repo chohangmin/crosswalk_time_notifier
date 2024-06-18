@@ -165,6 +165,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _toggleListening() {
+    int i = 0;
     if (_positionStreamSubscription == null) {
       final positionStream = _geolocatorPlatform.getPositionStream(
           locationSettings: _locationSettings);
@@ -172,6 +173,7 @@ class _MainScreenState extends State<MainScreen> {
         _positionStreamSubscription?.cancel();
         _positionStreamSubscription = null;
       }).listen((position) async {
+        print('[CHECK LISTENING] ${i++}');
         List<Map<String, dynamic>> results = [];
 
         results = await _spatialDbService.findIdsWithinArea(
@@ -189,27 +191,28 @@ class _MainScreenState extends State<MainScreen> {
 
             final Future<RemainTimeModel?> rtFuture =
                 _apiService.getRemainTime();
+
             final Future<SignalInfoModel?> siFuture =
                 _apiService.getSignalInfo();
 
             final List responses = await Future.wait([siFuture, rtFuture]);
+            print('[CHECK] api completed');
 
             TrafficInfoModel testValue = TrafficInfoModel(
                 name: 'Test S E',
                 isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
                 time: responses[1].sePdsgStat);
 
-            print('[BOOL] ${responses[0].sePdsgStat}');
-            print('[TIME] ${responses[1].sePdsgStat}');
-
             setState(() {
               _id = id;
               lightValue = testValue;
+              print('[CHECK] set test value');
             });
           }
         } else {
           setState(() {
             lightValue = defaultValue;
+            print('[CHECK] default value');
           });
         }
       });

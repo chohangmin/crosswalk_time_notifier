@@ -32,16 +32,22 @@ class _LightWidgetState extends State<LightWidget> {
 
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_remainTime! > 0) {
-          _remainTime = _remainTime! - 10;
-        } else {
-          _timer.cancel();
-          print('[end]');
+      
+        if (_remainTime! <= 0) {
+            _timer.cancel();
+          
           widget.isMovementAllowed = !widget.isMovementAllowed!;
           _remainTime = 0;
+          setState(() {
+            
+          });
+        } else {
+           _remainTime = _remainTime! - 10;
+           setState(() {
+             
+           });
         }
-      });
+
     });
   }
 
@@ -58,25 +64,24 @@ class _LightWidgetState extends State<LightWidget> {
     //   resetTimer();
     // }
 
-    print('[UPDATE]');
+    print('[WIDGET UPDATE]');
     if (widget.name == 'Default') {
       dispose();
     }
 
     setState(() {
       _remainTime = widget.time?.toInt();
-      print('[CHECK remain Time] $_remainTime');
       if (_remainTime != null) {
         startTimer();
-        print('[START]');
+        print('[TIMER START]');
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // print(
-    //     '[TEST Light widget value] ${widget.name} ${widget.isMovementAllowed} ${widget.time} TIME : $_remainTime');
+    print(
+        '[TIMER TIME] ${widget.name} ${widget.isMovementAllowed} ${widget.time} TIME : $_remainTime');
     return Container(
       width: 50,
       height: 50,
