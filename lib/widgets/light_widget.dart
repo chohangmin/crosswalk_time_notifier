@@ -34,7 +34,7 @@ class _LightWidgetState extends State<LightWidget> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainTime! > 0) {
-          _remainTime = _remainTime! - 20;
+          _remainTime = _remainTime! - 10;
         } else {
           _timer.cancel();
           print('[end]');

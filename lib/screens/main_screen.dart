@@ -30,6 +30,19 @@ class _MainScreenState extends State<MainScreen> {
   TrafficInfoModel defaultValue =
       TrafficInfoModel(name: 'Default', isMovementAllowed: null, time: null);
 
+  final LocationSettings _locationSettings = AndroidSettings(
+    accuracy: LocationAccuracy.best,
+    distanceFilter: 0,
+    forceLocationManager: true,
+    intervalDuration: const Duration(seconds: 1),
+    // foregroundNotificationConfig: const ForegroundNotificationConfig(
+    //   notificationText:
+    //       "Example app will continue to receive your location even when you aren't using it",
+    //   notificationTitle: "Running in Background",
+    //   enableWakeLock: true,
+    // ),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -153,7 +166,8 @@ class _MainScreenState extends State<MainScreen> {
 
   void _toggleListening() {
     if (_positionStreamSubscription == null) {
-      final positionStream = _geolocatorPlatform.getPositionStream();
+      final positionStream = _geolocatorPlatform.getPositionStream(
+          locationSettings: _locationSettings);
       _positionStreamSubscription = positionStream.handleError((error) {
         _positionStreamSubscription?.cancel();
         _positionStreamSubscription = null;
