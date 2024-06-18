@@ -62,8 +62,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return Center(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -71,7 +71,6 @@ class _MainScreenState extends State<MainScreen> {
             onPressed: () {
               _positionStreamStarted = !_positionStreamStarted;
               _toggleListening();
-              setState(() {});
             },
             style: ButtonStyle(
               backgroundColor: _determineButtonColor(),
@@ -82,12 +81,13 @@ class _MainScreenState extends State<MainScreen> {
                 : const Icon(Icons.pause),
           ),
           ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _id = -1;
-                });
-              },
-              child: const Icon(Icons.ac_unit)),
+            onPressed: () {
+              setState(() {
+                _id = -1;
+              });
+            },
+            child: const Icon(Icons.restore_page_outlined),
+          ),
           LightWidget(
             name: lightValue.name,
             isMovementAllowed: lightValue.isMovementAllowed,
