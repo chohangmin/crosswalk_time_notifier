@@ -187,6 +187,9 @@ class _MainScreenState extends State<MainScreen> {
           int id = results[0]['id'];
 
           if (_id != id) {
+            setState(() {
+              _id = id;
+            });
             _apiService.setId(id.toString());
 
             final Future<RemainTimeModel?> rtFuture =
@@ -204,7 +207,6 @@ class _MainScreenState extends State<MainScreen> {
                 time: responses[1].sePdsgStat);
 
             setState(() {
-              _id = id;
               lightValue = testValue;
               print('[CHECK] set test value');
             });

@@ -21,61 +21,60 @@ class LightWidget extends StatefulWidget {
 }
 
 class _LightWidgetState extends State<LightWidget> {
-  late Timer _timer;
+ Timer? _timer;
   int? _remainTime;
 
   @override
   void initState() {
     super.initState();
-    // _remainTime = widget.time?.toInt();
+    _remainTime = widget.time?.toInt();
+    if (_remainTime != null) {
+      startTimer();
+    }
   }
 
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      
+      setState(() {
         if (_remainTime! <= 0) {
-            _timer.cancel();
-          
-          widget.isMovementAllowed = !widget.isMovementAllowed!;
-          _remainTime = 0;
-          setState(() {
-            
-          });
-        } else {
-           _remainTime = _remainTime! - 10;
-           setState(() {
-             
-           });
-        }
+          _timer?.cancel();
 
+          widget.isMovementAllowed = !widget.isMovementAllowed!;
+          // _remainTime = 0;
+        } else {
+          _remainTime = _remainTime! - 10;
+        }
+      });
     });
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(LightWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    //     if (widget.time != oldWidget.time || widget.isMovementAllowed != oldWidget.isMovementAllowed) {
-    //   resetTimer();
-    // }
 
     print('[WIDGET UPDATE]');
     if (widget.name == 'Default') {
       dispose();
     }
 
-    setState(() {
-      _remainTime = widget.time?.toInt();
-      if (_remainTime != null) {
-        startTimer();
-        print('[TIMER START]');
-      }
-    });
+    if (widget.name != oldWidget.name || widget.time != oldWidget.time ||
+        widget.isMovementAllowed != oldWidget.isMovementAllowed) {
+      _timer?.cancel();
+
+      setState(() {
+        _remainTime = widget.time?.toInt();
+        if (_remainTime != null) {
+          startTimer();
+          print('[TIMER START]');
+        }
+      });
+    }
   }
 
   @override
