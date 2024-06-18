@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
@@ -42,6 +43,18 @@ class _MainScreenState extends State<MainScreen> {
     //   enableWakeLock: true,
     // ),
   );
+
+  final double onePR = 0 * pi;
+  final double twoPR = 1 / 4 * pi;
+  final double threePR = 1 / 2 * pi;
+  final double fourPR = 3 / 4 * pi;
+  final double fivePR = 1 * pi;
+
+  final double oneNR = -1 * pi;
+  final double twoNR = -3 / 4 * pi;
+  final double threeNR = -1 / 2 * pi;
+  final double fourNR = -1 / 4 * pi;
+  final double fiveNR = 0 * pi;
 
   @override
   void initState() {
@@ -207,10 +220,34 @@ class _MainScreenState extends State<MainScreen> {
             final List responses = await Future.wait([siFuture, rtFuture]);
             print('[CHECK] api completed');
 
-            TrafficInfoModel testValue = TrafficInfoModel(
-                name: 'Test S E',
-                isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
-                time: responses[1].sePdsgStat);
+            double angleRad = returnAtan2(results[0]['minX'],
+                results[0]['minY'], position.latitude, position.longitude);
+
+            TrafficInfoModel testValue;
+
+            if (-0.5 * pi <= angleRad && angleRad < 0.0 * pi) {
+              // south east
+
+              testValue = TrafficInfoModel(
+                  name: 'Test S E',
+                  isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
+                  time: responses[1].sePdsgStat);
+            } else if (-1 * pi <= angleRad && angleRad < -0.5 * pi) {
+              testValue = TrafficInfoModel(
+                  name: 'Test S W',
+                  isMovementAllowed: changeSigToBool(responses[0].swPdsgStat),
+                  time: responses[1].swPdsgStat); // south west
+            } else if (0.5 * pi <= angleRad && angleRad < 1.0 * pi) {
+              testValue = TrafficInfoModel(
+                  name: 'Test N W',
+                  isMovementAllowed: changeSigToBool(responses[0].nwPdsgStat),
+                  time: responses[1].nwPdsgStat); // north west
+            } else {
+              testValue = TrafficInfoModel(
+                  name: 'Test N E',
+                  isMovementAllowed: changeSigToBool(responses[0].nePdsgStat),
+                  time: responses[1].nePdsgStat); // north east
+            }
 
             setState(() {
               lightValue = testValue;
@@ -248,5 +285,31 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     return null;
+  }
+
+  double returnAtan2(double lat1, double lon1, double lat2, double lon2) {
+    double phi1 = degreesToRadians(lat1);
+    double lambda1 = degreesToRadians(lon1);
+
+    double phi2 = degreesToRadians(lat2);
+    double lambda2 = degreesToRadians(lon2);
+
+    double x1 = cos(phi1) * cos(lambda1);
+    double y1 = cos(phi1) * sin(lambda1);
+
+    double x2 = cos(phi2) * cos(lambda2);
+    double y2 = cos(phi2) * sin(lambda2);
+
+    double angleRad = atan2(y2 - y1, x2 - x1);
+
+    return angleRad;
+  }
+
+  double degreesToRadians(double degrees) {
+    return degrees * (pi / 180.0);
+  }
+
+  double radiansToDegrees(double radians) {
+    return radians * (180.0 / pi);
   }
 }
