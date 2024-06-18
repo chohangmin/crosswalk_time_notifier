@@ -21,7 +21,7 @@ class LightWidget extends StatefulWidget {
 }
 
 class _LightWidgetState extends State<LightWidget> {
- Timer? _timer;
+  Timer? _timer;
   int? _remainTime;
 
   @override
@@ -59,11 +59,9 @@ class _LightWidgetState extends State<LightWidget> {
     super.didUpdateWidget(oldWidget);
 
     print('[WIDGET UPDATE]');
-    if (widget.name == 'Default') {
-      dispose();
-    }
 
-    if (widget.name != oldWidget.name || widget.time != oldWidget.time ||
+    if (widget.name != oldWidget.name ||
+        widget.time != oldWidget.time ||
         widget.isMovementAllowed != oldWidget.isMovementAllowed) {
       _timer?.cancel();
 
@@ -82,8 +80,8 @@ class _LightWidgetState extends State<LightWidget> {
     print(
         '[TIMER TIME] ${widget.name} ${widget.isMovementAllowed} ${widget.time} TIME : $_remainTime');
     return Container(
-      width: 50,
-      height: 50,
+      width: 300,
+      height: 300,
       decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: widget.isMovementAllowed == null
@@ -93,12 +91,20 @@ class _LightWidgetState extends State<LightWidget> {
         children: [
           Center(
             child: RichText(
+              textAlign: TextAlign.center,
               text: TextSpan(
-                  text:
-                      '${widget.name} \n ${((_remainTime ?? 0) ~/ 10).toInt()}',
-                  style: const TextStyle(
-                    fontSize: 10,
-                  )),
+                style: const TextStyle(
+                  fontSize: 30,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${widget.name} \n',
+                  ),
+                  TextSpan(
+                    text: '${((_remainTime ?? 0) ~/ 10).toInt()}',
+                  )
+                ],
+              ),
             ),
           )
         ],

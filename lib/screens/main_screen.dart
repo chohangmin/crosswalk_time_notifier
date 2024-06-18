@@ -67,6 +67,14 @@ class _MainScreenState extends State<MainScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          LightWidget(
+            name: lightValue.name,
+            isMovementAllowed: lightValue.isMovementAllowed,
+            time: lightValue.time,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           ElevatedButton(
             onPressed: () {
               _positionStreamStarted = !_positionStreamStarted;
@@ -80,6 +88,9 @@ class _MainScreenState extends State<MainScreen> {
                 ? const Icon(Icons.play_arrow)
                 : const Icon(Icons.pause),
           ),
+          const SizedBox(
+            height: 20,
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() {
@@ -88,11 +99,6 @@ class _MainScreenState extends State<MainScreen> {
             },
             child: const Icon(Icons.restore_page_outlined),
           ),
-          LightWidget(
-            name: lightValue.name,
-            isMovementAllowed: lightValue.isMovementAllowed,
-            time: lightValue.time,
-          )
         ],
       ),
     );
@@ -227,6 +233,7 @@ class _MainScreenState extends State<MainScreen> {
       if (_positionStreamSubscription!.isPaused) {
         _positionStreamSubscription!.resume();
       } else {
+        lightValue = defaultValue;
         _positionStreamSubscription!.pause();
       }
     });
