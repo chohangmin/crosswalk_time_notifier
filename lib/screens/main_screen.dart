@@ -219,10 +219,12 @@ class _MainScreenState extends State<MainScreen> {
             final Future<SignalInfoModel?> siFuture =
                 _apiService.getSignalInfo();
 
-            final List responses = await Future.wait([siFuture, rtFuture]);
+            final List responses = await Future.wait([siFuture, rtFuture]); // RT api is about 3 seconds faster.
             stopwatch.stop();
             print('{Api Time ${stopwatch.elapsed}}');
             print('[CHECK] api completed');
+
+            
 
             double angleRad = returnAtan2(results[0]['minX'],
                 results[0]['minY'], position.latitude, position.longitude);

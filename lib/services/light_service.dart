@@ -116,7 +116,7 @@ class LightService {
     return signalStates;
   }
 
-  bool checkApiInstances() {
+  bool checkApiFieldsConsistent() {
     if ((filteredRT.ntPdsgStat != null && filteredSI.ntPdsgStat != null) ||
         (filteredRT.etPdsgStat != null && filteredSI.etPdsgStat != null) ||
         (filteredRT.stPdsgStat != null && filteredSI.stPdsgStat != null) ||
