@@ -32,6 +32,8 @@ class ApiService {
     RemainTimeModel? remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
 
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -40,7 +42,9 @@ class ApiService {
       // print(remainTimes);
       print('{Remain Time Api called}');
       remainTimeInstance = RemainTimeModel.fromJson(remainTimes[0]);
-
+      print('<RT Value> ${remainTimeInstance.trsmKstTime?.toLocal()}');
+      stopwatch.stop();
+      print('{RT TIME ${stopwatch.elapsed}}');
       return remainTimeInstance;
     } else {
       throw Exception(
@@ -52,6 +56,8 @@ class ApiService {
     SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
 
+    Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -61,7 +67,9 @@ class ApiService {
         var instance = SignalInfoModel.fromJson(signalInfo);
         if (instance.id == id) {
           signalInfoInstance = instance;
-
+          print('<SI Value> ${signalInfoInstance.trsmKstTime?.toLocal()}');
+          stopwatch.stop();
+          print('{SI TIME ${stopwatch.elapsed}}');
           return signalInfoInstance;
         }
       }

@@ -211,6 +211,8 @@ class _MainScreenState extends State<MainScreen> {
             });
             _apiService.setId(id.toString());
 
+            Stopwatch stopwatch = Stopwatch();
+            stopwatch.start();
             final Future<RemainTimeModel?> rtFuture =
                 _apiService.getRemainTime();
 
@@ -218,6 +220,8 @@ class _MainScreenState extends State<MainScreen> {
                 _apiService.getSignalInfo();
 
             final List responses = await Future.wait([siFuture, rtFuture]);
+            stopwatch.stop();
+            print('{Api Time ${stopwatch.elapsed}}');
             print('[CHECK] api completed');
 
             double angleRad = returnAtan2(results[0]['minX'],
