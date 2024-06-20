@@ -25,7 +25,20 @@ class _MainScreenState extends State<MainScreen> {
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool _positionStreamStarted = false;
   int _id = -1;
-  TrafficInfoModel lightValue = TrafficInfoModel(
+  final double _angleRad = -11;
+
+  TrafficInfoModel lightValue0 = TrafficInfoModel(
+      name: 'Light Value', isMovementAllowed: null, time: null);
+  TrafficInfoModel lightValue1 = TrafficInfoModel(
+      name: 'Light Value', isMovementAllowed: null, time: null);
+
+  TrafficInfoModel lightValue2 = TrafficInfoModel(
+      name: 'Light Value', isMovementAllowed: null, time: null);
+
+  TrafficInfoModel lightValue3 = TrafficInfoModel(
+      name: 'Light Value', isMovementAllowed: null, time: null);
+
+  TrafficInfoModel lightValue4 = TrafficInfoModel(
       name: 'Light Value', isMovementAllowed: null, time: null);
 
   TrafficInfoModel defaultValue =
@@ -56,6 +69,15 @@ class _MainScreenState extends State<MainScreen> {
   final double fourNR = -1 / 4 * pi;
   final double fiveNR = 0 * pi;
 
+  late double angleRad;
+  List<Map<String, dynamic>> results = [];
+
+  int lightDirection = 0;
+
+  late List responses;
+
+  bool isType = true;
+
   @override
   void initState() {
     super.initState();
@@ -80,11 +102,36 @@ class _MainScreenState extends State<MainScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          LightWidget(
-            name: lightValue.name,
-            isMovementAllowed: lightValue.isMovementAllowed,
-            time: lightValue.time,
-          ),
+          if (lightDirection == 0)
+            LightWidget(
+              name: lightValue0.name,
+              isMovementAllowed: lightValue0.isMovementAllowed,
+              time: lightValue0.time,
+            ),
+          if (lightDirection == 1)
+            LightWidget(
+              name: lightValue1.name,
+              isMovementAllowed: lightValue1.isMovementAllowed,
+              time: lightValue1.time,
+            ),
+          if (lightDirection == 2)
+            LightWidget(
+              name: lightValue2.name,
+              isMovementAllowed: lightValue2.isMovementAllowed,
+              time: lightValue2.time,
+            ),
+          if (lightDirection == 3)
+            LightWidget(
+              name: lightValue3.name,
+              isMovementAllowed: lightValue3.isMovementAllowed,
+              time: lightValue3.time,
+            ),
+          if (lightDirection == 4)
+            LightWidget(
+              name: lightValue4.name,
+              isMovementAllowed: lightValue4.isMovementAllowed,
+              time: lightValue4.time,
+            ),
           const SizedBox(
             height: 20,
           ),
@@ -111,6 +158,17 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
             child: const Icon(Icons.restore_page_outlined),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                lightDirection = 4;
+              });
+            },
+            child: const Icon(Icons.numbers),
           ),
         ],
       ),
@@ -193,7 +251,7 @@ class _MainScreenState extends State<MainScreen> {
         _positionStreamSubscription = null;
       }).listen((position) async {
         print('[CHECK LISTENING] ${i++}');
-        List<Map<String, dynamic>> results = [];
+        results = [];
 
         results = await _spatialDbService.findIdsWithinArea(
             position.latitude, position.longitude, 5000);
@@ -219,50 +277,106 @@ class _MainScreenState extends State<MainScreen> {
             final Future<SignalInfoModel?> siFuture =
                 _apiService.getSignalInfo();
 
-            final List responses = await Future.wait([siFuture, rtFuture]); // RT api is about 3 seconds faster.
+            responses = await Future.wait(
+                [siFuture, rtFuture]); // RT api is about 3 seconds faster.
             stopwatch.stop();
             print('{Api Time ${stopwatch.elapsed}}');
             print('[CHECK] api completed');
 
-            
+            if (!checkApiFieldsConsistent(responses)) {
+              return;
+            }
 
-            double angleRad = returnAtan2(results[0]['minX'],
-                results[0]['minY'], position.latitude, position.longitude);
+            isType = checkLightType(responses);
 
-            TrafficInfoModel testValue;
+            angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
+                position.latitude, position.longitude);
 
             if (-0.5 * pi <= angleRad && angleRad < 0.0 * pi) {
-              // south east
-
-              testValue = TrafficInfoModel(
-                  name: 'Test S E',
-                  isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
-                  time: responses[1].sePdsgStat);
+              lightDirection = 2;
             } else if (-1 * pi <= angleRad && angleRad < -0.5 * pi) {
-              testValue = TrafficInfoModel(
-                  name: 'Test S W',
-                  isMovementAllowed: changeSigToBool(responses[0].swPdsgStat),
-                  time: responses[1].swPdsgStat); // south west
+              lightDirection = 3;
             } else if (0.5 * pi <= angleRad && angleRad < 1.0 * pi) {
-              testValue = TrafficInfoModel(
-                  name: 'Test N W',
-                  isMovementAllowed: changeSigToBool(responses[0].nwPdsgStat),
-                  time: responses[1].nwPdsgStat); // north west
+              lightDirection = 4;
             } else {
-              testValue = TrafficInfoModel(
-                  name: 'Test N E',
-                  isMovementAllowed: changeSigToBool(responses[0].nePdsgStat),
-                  time: responses[1].nePdsgStat); // north east
+              lightDirection = 1;
             }
 
             setState(() {
-              lightValue = testValue;
+              if (isType) {
+                lightValue1 = TrafficInfoModel(
+                    name: 'N',
+                    isMovementAllowed: changeSigToBool(responses[0].ntPdsgStat),
+                    time: responses[1].ntPdsgStat); // north
+                lightValue2 = TrafficInfoModel(
+                    name: 'E',
+                    isMovementAllowed: changeSigToBool(responses[0].etPdsgStat),
+                    time: responses[1].etPdsgStat); // east
+                lightValue3 = TrafficInfoModel(
+                    name: 'S',
+                    isMovementAllowed: changeSigToBool(responses[0].stPdsgStat),
+                    time: responses[1].stPdsgStat); // south
+                lightValue4 = TrafficInfoModel(
+                    name: 'W',
+                    isMovementAllowed: changeSigToBool(responses[0].wtPdsgStat),
+                    time: responses[1].wtPdsgStat); // west
+              } else {
+                lightValue1 = TrafficInfoModel(
+                    name: 'N E',
+                    isMovementAllowed: changeSigToBool(responses[0].nePdsgStat),
+                    time: responses[1].nePdsgStat); // north east
+                lightValue2 = TrafficInfoModel(
+                    name: 'S E',
+                    isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
+                    time: responses[1].sePdsgStat); // south east
+                lightValue3 = TrafficInfoModel(
+                    name: 'S W',
+                    isMovementAllowed: changeSigToBool(responses[0].swPdsgStat),
+                    time: responses[1].swPdsgStat); // south west
+                lightValue4 = TrafficInfoModel(
+                    name: 'N W',
+                    isMovementAllowed: changeSigToBool(responses[0].nwPdsgStat),
+                    time: responses[1].nwPdsgStat); // north west
+              }
               print('[CHECK] set test value');
             });
+          } else if (_id == id) {
+            angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
+                position.latitude, position.longitude);
+
+            if (isType) {
+              if (-0.5 * pi <= angleRad && angleRad < 0.0 * pi) {
+                lightDirection = 2; // sw
+              } else if (-1.0 * pi <= angleRad && angleRad < -0.5 * pi) {
+                lightDirection = 3; // se
+              } else if (0.5 * pi <= angleRad && angleRad < 1.0 * pi) {
+                lightDirection = 4; // nw
+              } else if (0.0 * pi <= angleRad && angleRad < 0.5 * pi) {
+                lightDirection = 1; // ne
+              } else {
+                lightDirection = 0;
+              }
+            } else {
+              if ((-1 * pi <= angleRad && angleRad < -0.75 * pi) ||
+                  (0.0 * pi <= angleRad && angleRad < 0.25 * pi)) {
+                lightDirection = 2; // e
+              } else if (0.25 * pi <= angleRad && angleRad < 0.75 * pi) {
+                lightDirection = 1; // n
+              } else if ((-0.25 * pi <= angleRad && angleRad < 0.0 * pi) ||
+                  (0.75 * pi <= angleRad && angleRad < 1.0 * pi)) {
+                lightDirection = 4; // w
+              } else if (-0.75 * pi <= angleRad && angleRad < -0.25 * pi) {
+                lightDirection = 3; // s
+              } else {
+                lightDirection = 0;
+              }
+            }
+
+            setState(() {});
           }
         } else {
           setState(() {
-            lightValue = defaultValue;
+            lightValue0 = defaultValue;
             print('[CHECK] default value');
           });
         }
@@ -276,7 +390,7 @@ class _MainScreenState extends State<MainScreen> {
       if (_positionStreamSubscription!.isPaused) {
         _positionStreamSubscription!.resume();
       } else {
-        lightValue = defaultValue;
+        lightValue0 = defaultValue;
         _positionStreamSubscription!.pause();
       }
     });
@@ -317,5 +431,31 @@ class _MainScreenState extends State<MainScreen> {
 
   double radiansToDegrees(double radians) {
     return radians * (180.0 / pi);
+  }
+
+  bool checkApiFieldsConsistent(List responses) {
+    if ((responses[0].ntPdsgStat != null && responses[1].ntPdsgStat != null) ||
+        (responses[0].etPdsgStat != null && responses[1].etPdsgStat != null) ||
+        (responses[0].stPdsgStat != null && responses[1].stPdsgStat != null) ||
+        (responses[0].wtPdsgStat != null && responses[1].wtPdsgStat != null) ||
+        (responses[0].nePdsgStat != null && responses[1].nePdsgStat != null) ||
+        (responses[0].sePdsgStat != null && responses[1].sePdsgStat != null) ||
+        (responses[0].swPdsgStat != null && responses[1].swPdsgStat != null) ||
+        (responses[0].nwPdsgStat != null && responses[1].nwPdsgStat != null)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool checkLightType(List responses) {
+    if ((responses[1].ntPdsgStat != null &&
+        responses[1].etPdsgStat != null &&
+        responses[1].stPdsgStat != null &&
+        responses[1].wtPdsgStat != null)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
