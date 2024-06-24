@@ -24,22 +24,23 @@ class _MainScreenState extends State<MainScreen> {
   StreamSubscription<Position>? _positionStreamSubscription;
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool _positionStreamStarted = false;
+
   int _id = -1;
   final double _angleRad = -11;
 
   TrafficInfoModel lightValue0 = TrafficInfoModel(
-      name: 'Light Value', isMovementAllowed: null, time: null);
+      name: 'Light Value 0', isMovementAllowed: null, time: null);
   TrafficInfoModel lightValue1 = TrafficInfoModel(
-      name: 'Light Value', isMovementAllowed: null, time: null);
+      name: 'Light Value 1', isMovementAllowed: null, time: null);
 
   TrafficInfoModel lightValue2 = TrafficInfoModel(
-      name: 'Light Value', isMovementAllowed: null, time: null);
+      name: 'Light Value 2', isMovementAllowed: null, time: null);
 
   TrafficInfoModel lightValue3 = TrafficInfoModel(
-      name: 'Light Value', isMovementAllowed: null, time: null);
+      name: 'Light Value 3', isMovementAllowed: null, time: null);
 
   TrafficInfoModel lightValue4 = TrafficInfoModel(
-      name: 'Light Value', isMovementAllowed: null, time: null);
+      name: 'Light Value 4', isMovementAllowed: null, time: null);
 
   TrafficInfoModel defaultValue =
       TrafficInfoModel(name: 'Default', isMovementAllowed: null, time: null);
@@ -49,12 +50,6 @@ class _MainScreenState extends State<MainScreen> {
     distanceFilter: 0,
     forceLocationManager: true,
     intervalDuration: const Duration(seconds: 1),
-    // foregroundNotificationConfig: const ForegroundNotificationConfig(
-    //   notificationText:
-    //       "Example app will continue to receive your location even when you aren't using it",
-    //   notificationTitle: "Running in Background",
-    //   enableWakeLock: true,
-    // ),
   );
 
   final double onePR = 0 * pi;

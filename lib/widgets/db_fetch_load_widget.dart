@@ -13,6 +13,7 @@ class DbFetchLoadWidget extends StatefulWidget {
 
 class _DbFetchLoadWidgetState extends State<DbFetchLoadWidget> {
   bool _dataFetched = false;
+  final bool _apiAvailable = false;
   @override
   Widget build(BuildContext context) {
     if (!_dataFetched) {
@@ -20,15 +21,18 @@ class _DbFetchLoadWidgetState extends State<DbFetchLoadWidget> {
         body: Center(
           child: ElevatedButton(
             onPressed: () async {
-              // DbApiService dbApiService = DbApiService();
               SpatialDbService spatialDbService = SpatialDbService();
+              if (_apiAvailable) {
+                DbApiService dbApiService = DbApiService();
 
-              // await dbApiService.setApiKey();
-              // List<CrossMapModel> crossMaps = await dbApiService.getCrossMap();
+                await dbApiService.setApiKey();
+                List<CrossMapModel> crossMaps =
+                    await dbApiService.getCrossMap();
 
-              // spatialDbService.makeRtreeDb(crossMaps);
-
-              spatialDbService.makeDb();
+                spatialDbService.makeRtreeDb(crossMaps);
+              } else {
+                spatialDbService.makeDb();
+              }
 
               setState(() {
                 _dataFetched = !_dataFetched;
