@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
 import 'package:flutter/foundation.dart';
@@ -40,7 +41,7 @@ class _LightWidgetState extends State<LightWidget> {
           _timer?.cancel();
 
           widget.isMovementAllowed = !widget.isMovementAllowed!;
-          // _remainTime = 0;
+          
         } else {
           _remainTime = _remainTime! - 10;
         }
@@ -58,11 +59,7 @@ class _LightWidgetState extends State<LightWidget> {
   void didUpdateWidget(LightWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    print('[WIDGET UPDATE]');
-
-    if (widget.name != oldWidget.name ||
-        widget.time != oldWidget.time ||
-        widget.isMovementAllowed != oldWidget.isMovementAllowed) {
+    if (widget.time != oldWidget.time) {
       _timer?.cancel();
 
       setState(() {

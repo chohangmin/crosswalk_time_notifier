@@ -123,8 +123,7 @@ class SpatialDbService {
 
   Future<List<Map<String, dynamic>>> findIdsWithinArea(
       double myLon, double myLat, double length) async {
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
+
 
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'rtreeDb.db');
@@ -169,8 +168,7 @@ class SpatialDbService {
 
     db.dispose();
 
-    print('[SDB Time] ${stopwatch.elapsed}');
-    stopwatch.stop();
+
 
     return results;
   }

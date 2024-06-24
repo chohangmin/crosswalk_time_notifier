@@ -26,7 +26,6 @@ class _MainScreenState extends State<MainScreen> {
   bool _positionStreamStarted = false;
 
   int _id = -1;
-  final double _angleRad = -11;
 
   TrafficInfoModel lightValue0 = TrafficInfoModel(
       name: 'Light Value 0', isMovementAllowed: null, time: null);
@@ -168,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
             child: const Icon(Icons.exposure_zero),
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           ElevatedButton(
             onPressed: () {
@@ -179,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
             child: const Icon(Icons.looks_one),
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           ElevatedButton(
             onPressed: () {
@@ -190,7 +189,7 @@ class _MainScreenState extends State<MainScreen> {
             child: const Icon(Icons.looks_two),
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           ElevatedButton(
             onPressed: () {
@@ -201,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
             child: const Icon(Icons.looks_3),
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           ElevatedButton(
             onPressed: () {
@@ -397,7 +396,7 @@ class _MainScreenState extends State<MainScreen> {
                     isMovementAllowed: changeSigToBool(responses[0].nwPdsgStat),
                     time: responses[1].nwPdsgStat); // north west
               }
-              print('[CHECK] set test value');
+            
             });
           } else if (_id == id) {
             angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
@@ -433,7 +432,10 @@ class _MainScreenState extends State<MainScreen> {
         } else {
           setState(() {
             lightValue0 = defaultValue;
-            print('[CHECK] default value');
+            lightValue1 = defaultValue;
+            lightValue2 = defaultValue;
+            lightValue3 = defaultValue;
+            lightValue4 = defaultValue;
           });
         }
       });
