@@ -52,10 +52,10 @@ class SpatialDbService {
 
       stmt.execute([
         id,
-        lat,
-        lat,
         lon,
         lon,
+        lat,
+        lat,
         name,
       ]);
     }
@@ -94,10 +94,10 @@ class SpatialDbService {
 
       stmt.execute([
         id,
-        lat,
-        lat,
         lon,
         lon,
+        lat,
+        lat,
         name,
       ]);
     }
@@ -148,7 +148,7 @@ class SpatialDbService {
     final ResultSet resultSet = db.select('''
       SELECT * FROM rtreeDb
       WHERE minX >= ? AND maxX <= ? AND minY >= ? AND maxY <= ?
-    ''', [lat2, lat1, lon2, lon1]);
+    ''', [lon2, lon1, lat2, lat1]);
 
     // print('diff $latDiff $lonDiff');
 
