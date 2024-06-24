@@ -52,18 +52,6 @@ class _MainScreenState extends State<MainScreen> {
     intervalDuration: const Duration(seconds: 1),
   );
 
-  final double onePR = 0 * pi;
-  final double twoPR = 1 / 4 * pi;
-  final double threePR = 1 / 2 * pi;
-  final double fourPR = 3 / 4 * pi;
-  final double fivePR = 1 * pi;
-
-  final double oneNR = -1 * pi;
-  final double twoNR = -3 / 4 * pi;
-  final double threeNR = -1 / 2 * pi;
-  final double fourNR = -1 / 4 * pi;
-  final double fiveNR = 0 * pi;
-
   late double angleRad;
   List<Map<String, dynamic>> results = [];
 
@@ -97,36 +85,50 @@ class _MainScreenState extends State<MainScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          if (lightDirection == 0)
-            LightWidget(
-              name: lightValue0.name,
-              isMovementAllowed: lightValue0.isMovementAllowed,
-              time: lightValue0.time,
-            ),
-          if (lightDirection == 1)
-            LightWidget(
-              name: lightValue1.name,
-              isMovementAllowed: lightValue1.isMovementAllowed,
-              time: lightValue1.time,
-            ),
-          if (lightDirection == 2)
-            LightWidget(
-              name: lightValue2.name,
-              isMovementAllowed: lightValue2.isMovementAllowed,
-              time: lightValue2.time,
-            ),
-          if (lightDirection == 3)
-            LightWidget(
-              name: lightValue3.name,
-              isMovementAllowed: lightValue3.isMovementAllowed,
-              time: lightValue3.time,
-            ),
-          if (lightDirection == 4)
-            LightWidget(
-              name: lightValue4.name,
-              isMovementAllowed: lightValue4.isMovementAllowed,
-              time: lightValue4.time,
-            ),
+          Stack(
+            children: [
+              Opacity(
+                opacity: lightDirection == 0 ? 1.0 : 0.0,
+                child: LightWidget(
+                  name: lightValue0.name,
+                  isMovementAllowed: lightValue0.isMovementAllowed,
+                  time: lightValue0.time,
+                ),
+              ),
+              Opacity(
+                opacity: lightDirection == 1 ? 1.0 : 0.0,
+                child: LightWidget(
+                  name: lightValue1.name,
+                  isMovementAllowed: lightValue1.isMovementAllowed,
+                  time: lightValue1.time,
+                ),
+              ),
+              Opacity(
+                opacity: lightDirection == 2 ? 1.0 : 0.0,
+                child: LightWidget(
+                  name: lightValue2.name,
+                  isMovementAllowed: lightValue2.isMovementAllowed,
+                  time: lightValue2.time,
+                ),
+              ),
+              Opacity(
+                opacity: lightDirection == 3 ? 1.0 : 0.0,
+                child: LightWidget(
+                  name: lightValue3.name,
+                  isMovementAllowed: lightValue3.isMovementAllowed,
+                  time: lightValue3.time,
+                ),
+              ),
+              Opacity(
+                opacity: lightDirection == 4 ? 1.0 : 0.0,
+                child: LightWidget(
+                  name: lightValue4.name,
+                  isMovementAllowed: lightValue4.isMovementAllowed,
+                  time: lightValue4.time,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -160,10 +162,54 @@ class _MainScreenState extends State<MainScreen> {
           ElevatedButton(
             onPressed: () {
               setState(() {
+                lightDirection = 0;
+              });
+            },
+            child: const Icon(Icons.exposure_zero),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                lightDirection = 1;
+              });
+            },
+            child: const Icon(Icons.looks_one),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                lightDirection = 2;
+              });
+            },
+            child: const Icon(Icons.looks_two),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                lightDirection = 3;
+              });
+            },
+            child: const Icon(Icons.looks_3),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
                 lightDirection = 4;
               });
             },
-            child: const Icon(Icons.numbers),
+            child: const Icon(Icons.looks_4),
           ),
         ],
       ),
@@ -249,7 +295,7 @@ class _MainScreenState extends State<MainScreen> {
         results = [];
 
         results = await _spatialDbService.findIdsWithinArea(
-            position.latitude, position.longitude, 5000);
+            position.longitude, position.latitude, 5000);
 
         // for (var result in results) {
         //   print('[Test] ${result['id']}');
@@ -274,6 +320,7 @@ class _MainScreenState extends State<MainScreen> {
 
             responses = await Future.wait(
                 [siFuture, rtFuture]); // RT api is about 3 seconds faster.
+
             stopwatch.stop();
             print('{Api Time ${stopwatch.elapsed}}');
             print('[CHECK] api completed');
@@ -287,18 +334,25 @@ class _MainScreenState extends State<MainScreen> {
             angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
                 position.latitude, position.longitude);
 
-            if (-0.5 * pi <= angleRad && angleRad < 0.0 * pi) {
-              lightDirection = 2;
-            } else if (-1 * pi <= angleRad && angleRad < -0.5 * pi) {
-              lightDirection = 3;
-            } else if (0.5 * pi <= angleRad && angleRad < 1.0 * pi) {
-              lightDirection = 4;
-            } else {
-              lightDirection = 1;
+            double angleDeg = angleRad * (180 / pi);
+
+            if (angleDeg < 0) {
+              angleDeg += 360;
             }
 
             setState(() {
               if (isType) {
+                if (angleDeg >= 0 && angleDeg < 45 ||
+                    angleDeg >= 315 && angleDeg < 360) {
+                  lightDirection = 2; // 동쪽 (E)
+                } else if (angleDeg >= 225 && angleDeg < 315) {
+                  lightDirection = 3; // 남쪽 (S)
+                } else if (angleDeg >= 135 && angleDeg < 225) {
+                  lightDirection = 4; // 서쪽 (W)
+                } else {
+                  lightDirection = 1; // 북쪽 (N)
+                }
+
                 lightValue1 = TrafficInfoModel(
                     name: 'N',
                     isMovementAllowed: changeSigToBool(responses[0].ntPdsgStat),
@@ -316,6 +370,16 @@ class _MainScreenState extends State<MainScreen> {
                     isMovementAllowed: changeSigToBool(responses[0].wtPdsgStat),
                     time: responses[1].wtPdsgStat); // west
               } else {
+                if (angleDeg >= 0 && angleDeg < 90) {
+                  lightDirection = 1; // 북동쪽 (NE)
+                } else if (angleDeg >= 270 && angleDeg < 360) {
+                  lightDirection = 3; // 남동쪽 (SE)
+                } else if (angleDeg >= 180 && angleDeg < 270) {
+                  lightDirection = 2; // 남서쪽 (SW)
+                } else {
+                  lightDirection = 4; // 북서쪽 (NW)
+                }
+
                 lightValue1 = TrafficInfoModel(
                     name: 'N E',
                     isMovementAllowed: changeSigToBool(responses[0].nePdsgStat),
@@ -339,31 +403,28 @@ class _MainScreenState extends State<MainScreen> {
             angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
                 position.latitude, position.longitude);
 
+            double angleDeg = angleRad * (180 / pi);
+
             if (isType) {
-              if (-0.5 * pi <= angleRad && angleRad < 0.0 * pi) {
-                lightDirection = 2; // sw
-              } else if (-1.0 * pi <= angleRad && angleRad < -0.5 * pi) {
-                lightDirection = 3; // se
-              } else if (0.5 * pi <= angleRad && angleRad < 1.0 * pi) {
-                lightDirection = 4; // nw
-              } else if (0.0 * pi <= angleRad && angleRad < 0.5 * pi) {
-                lightDirection = 1; // ne
+              if (angleDeg >= 0 && angleDeg < 45 ||
+                  angleDeg >= 315 && angleDeg < 360) {
+                lightDirection = 2; // 동쪽 (E)
+              } else if (angleDeg >= 225 && angleDeg < 315) {
+                lightDirection = 3; // 남쪽 (S)
+              } else if (angleDeg >= 135 && angleDeg < 225) {
+                lightDirection = 4; // 서쪽 (W)
               } else {
-                lightDirection = 0;
+                lightDirection = 1; // 북쪽 (N)
               }
             } else {
-              if ((-1 * pi <= angleRad && angleRad < -0.75 * pi) ||
-                  (0.0 * pi <= angleRad && angleRad < 0.25 * pi)) {
-                lightDirection = 2; // e
-              } else if (0.25 * pi <= angleRad && angleRad < 0.75 * pi) {
-                lightDirection = 1; // n
-              } else if ((-0.25 * pi <= angleRad && angleRad < 0.0 * pi) ||
-                  (0.75 * pi <= angleRad && angleRad < 1.0 * pi)) {
-                lightDirection = 4; // w
-              } else if (-0.75 * pi <= angleRad && angleRad < -0.25 * pi) {
-                lightDirection = 3; // s
+              if (angleDeg >= 0 && angleDeg < 90) {
+                lightDirection = 1; // 북동쪽 (NE)
+              } else if (angleDeg >= 270 && angleDeg < 360) {
+                lightDirection = 3; // 남동쪽 (SE)
+              } else if (angleDeg >= 180 && angleDeg < 270) {
+                lightDirection = 2; // 남서쪽 (SW)
               } else {
-                lightDirection = 0;
+                lightDirection = 4; // 북서쪽 (NW)
               }
             }
 

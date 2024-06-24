@@ -122,7 +122,7 @@ class SpatialDbService {
   }
 
   Future<List<Map<String, dynamic>>> findIdsWithinArea(
-      double myLat, double myLon, double length) async {
+      double myLon, double myLat, double length) async {
     Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
 
