@@ -56,13 +56,13 @@ V2는 4개의 신호정보 중 사용자와 가장 가까운 방향의 신호등
 # 실행 화면 
 ## Data Fetch Screen
 
-![Data Fetch Screen](./images/fetch screen.png)
+![Data Fetch Screen](./images/fetch_screen.png)
 
 ## Default Screen
 
-![Default Main Screen](./images/default main screen.png)
+![Default Main Screen](./images/default_screen.png)
 
 ## Light Screen
 
-![Light Main Screen](./images/light main screen.png)
+![Light Main Screen](./images/light_screen.png)
 
