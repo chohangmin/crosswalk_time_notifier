@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
 
   late List responses;
   // For remain time and signal info api Value
-  late bool isType;
+  bool isType = true;
   // If true, set type [N, E, S, W], else [NE, SE, SW, NW]
 
   @override
@@ -311,7 +311,7 @@ class _MainScreenState extends State<MainScreen> {
         results = [];
 
         results = await _spatialDbService.findIdsWithinArea(
-            position.longitude, position.latitude, 500);
+            position.longitude, position.latitude, 3000);
 
         if (results.length == 1) {
           // In area, if there is the one result (Our purpose)
@@ -421,31 +421,32 @@ class _MainScreenState extends State<MainScreen> {
             angleDeg = angleRad * (180 / pi);
 
             if (isType) {
-               if (angleDeg >= 45 && angleDeg < 135) {
-                  lightDirection = 1; // North
-                } else if (angleDeg >= 0 && angleDeg < 45 ||
-                    angleDeg >= 315 && angleDeg < 360) {
-                  lightDirection = 2; // East
-                } else if (angleDeg >= 225 && angleDeg < 315) {
-                  lightDirection = 3; // South
-                } else {
-                  lightDirection = 4; // West
-                }
+              if (angleDeg >= 45 && angleDeg < 135) {
+                lightDirection = 1; // North
+              } else if (angleDeg >= 0 && angleDeg < 45 ||
+                  angleDeg >= 315 && angleDeg < 360) {
+                lightDirection = 2; // East
+              } else if (angleDeg >= 225 && angleDeg < 315) {
+                lightDirection = 3; // South
+              } else {
+                lightDirection = 4; // West
+              }
             } else {
               if (angleDeg >= 0 && angleDeg < 90) {
-                  lightDirection = 1; // North East
-                } else if (angleDeg >= 270 && angleDeg < 360) {
-                  lightDirection = 2; // South East
-                } else if (angleDeg >= 180 && angleDeg < 270) {
-                  lightDirection = 3; // South West
-                } else {
-                  lightDirection = 4; // North West
-                }
+                lightDirection = 1; // North East
+              } else if (angleDeg >= 270 && angleDeg < 360) {
+                lightDirection = 2; // South East
+              } else if (angleDeg >= 180 && angleDeg < 270) {
+                lightDirection = 3; // South West
+              } else {
+                lightDirection = 4; // North West
+              }
             }
 
             setState(() {}); // Set light direciton
           }
-        } else { // If there is no result or more than 2 results
+        } else {
+          // If there is no result or more than 2 results
           setState(() {
             lightValue0 = defaultValue;
             lightValue1 = defaultValue;
@@ -471,10 +472,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   bool? changeSigToBool(String? sigState) {
-    if (sigState == 'permissive-Movement-Allowed') { // Green light
+    if (sigState == 'permissive-Movement-Allowed') {
+      // Green light
       return true;
     } else if (sigState == 'protected-Movement-Allowed' ||
-        sigState == 'stop-And-Remain') { // Red light
+        sigState == 'stop-And-Remain') {
+      // Red light
       return false;
     }
 
@@ -482,7 +485,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   double returnAtan2(double lat1, double lon1, double lat2, double lon2) {
-    
     double phi1 = degreesToRadians(lat1);
     double lambda1 = degreesToRadians(lon1);
 
