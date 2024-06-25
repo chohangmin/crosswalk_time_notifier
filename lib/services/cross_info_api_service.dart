@@ -5,7 +5,8 @@ import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-class ApiService {
+class CrossInfoApiService {
+
   static const String remainTimeUrl =
       'http://t-data.seoul.go.kr/apig/apiman-gateway/tapi/v2xSignalPhaseTimingInformation/1.0';
   static const String signalInfoUrl =
@@ -16,12 +17,12 @@ class ApiService {
 
   Future<void> setApiKey() async {
     await dotenv.load();
-    apiKey = await getApiKey();
+    apiKey = await getApiKey(); // Set api key
   }
 
   Future<String> getApiKey() async {
     String apiKey = dotenv.env['API_KEY'].toString();
-    return apiKey;
+    return apiKey; // Get api key from env
   }
 
   void setId(String newId) {
@@ -32,19 +33,16 @@ class ApiService {
     RemainTimeModel? remainTimeInstance;
     final url = Uri.parse('$remainTimeUrl?apiKey=$apiKey&itstId=$id');
 
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
+  
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final remainTimes = jsonDecode(response.body);
 
-      // print(remainTimes);
       print('{Remain Time Api called}');
       remainTimeInstance = RemainTimeModel.fromJson(remainTimes[0]);
       print('<RT Value> ${remainTimeInstance.trsmKstTime?.toLocal()}');
-      stopwatch.stop();
-      print('{RT TIME ${stopwatch.elapsed}}');
+
       return remainTimeInstance;
     } else {
       throw Exception(
@@ -56,8 +54,6 @@ class ApiService {
     SignalInfoModel? signalInfoInstance;
     final url = Uri.parse('$signalInfoUrl?apiKey=$apiKey');
 
-    Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -68,8 +64,6 @@ class ApiService {
         if (instance.id == id) {
           signalInfoInstance = instance;
           print('<SI Value> ${signalInfoInstance.trsmKstTime?.toLocal()}');
-          stopwatch.stop();
-          print('{SI TIME ${stopwatch.elapsed}}');
           return signalInfoInstance;
         }
       }

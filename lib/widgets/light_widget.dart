@@ -1,8 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class LightWidget extends StatefulWidget {

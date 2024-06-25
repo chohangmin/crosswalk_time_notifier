@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:crosswalk_time_notifier/models/remain_time_model.dart';
 import 'package:crosswalk_time_notifier/models/signal_info_model.dart';
 import 'package:crosswalk_time_notifier/models/traffic_info_model.dart';
-import 'package:crosswalk_time_notifier/services/api_service.dart';
+import 'package:crosswalk_time_notifier/services/cross_info_api_service.dart';
 import 'package:crosswalk_time_notifier/widgets/light_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,29 +20,36 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   final SpatialDbService _spatialDbService = SpatialDbService();
-  final ApiService _apiService = ApiService();
+  final CrossInfoApiService _crossInfoApiService = CrossInfoApiService();
   StreamSubscription<Position>? _positionStreamSubscription;
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool _positionStreamStarted = false;
 
   int _id = -1;
-
-  TrafficInfoModel lightValue0 = TrafficInfoModel(
-      name: 'Light Value 0', isMovementAllowed: null, time: null);
-  TrafficInfoModel lightValue1 = TrafficInfoModel(
-      name: 'Light Value 1', isMovementAllowed: null, time: null);
-
-  TrafficInfoModel lightValue2 = TrafficInfoModel(
-      name: 'Light Value 2', isMovementAllowed: null, time: null);
-
-  TrafficInfoModel lightValue3 = TrafficInfoModel(
-      name: 'Light Value 3', isMovementAllowed: null, time: null);
-
-  TrafficInfoModel lightValue4 = TrafficInfoModel(
-      name: 'Light Value 4', isMovementAllowed: null, time: null);
+  // Default value
 
   TrafficInfoModel defaultValue =
       TrafficInfoModel(name: 'Default', isMovementAllowed: null, time: null);
+
+  TrafficInfoModel lightValue0 = TrafficInfoModel(
+      name: 'Light Value 0', isMovementAllowed: null, time: null);
+  // Default light screen when there is no signals
+
+  TrafficInfoModel lightValue1 = TrafficInfoModel(
+      name: 'Light Value 1', isMovementAllowed: null, time: null);
+  // No 1 light screen, cover North and North East
+
+  TrafficInfoModel lightValue2 = TrafficInfoModel(
+      name: 'Light Value 2', isMovementAllowed: null, time: null);
+  // No 2 light screen, cover East and South East
+
+  TrafficInfoModel lightValue3 = TrafficInfoModel(
+      name: 'Light Value 3', isMovementAllowed: null, time: null);
+  // No 3 light screen, cover South and South West
+
+  TrafficInfoModel lightValue4 = TrafficInfoModel(
+      name: 'Light Value 4', isMovementAllowed: null, time: null);
+  // No 4 light screen, cover West and North West
 
   final LocationSettings _locationSettings = AndroidSettings(
     accuracy: LocationAccuracy.best,
@@ -50,21 +57,29 @@ class _MainScreenState extends State<MainScreen> {
     forceLocationManager: true,
     intervalDuration: const Duration(seconds: 1),
   );
+  // Setting detail location
 
   late double angleRad;
-  List<Map<String, dynamic>> results = [];
+  // Calculate atan2 angle
 
-  int lightDirection = 0;
+  late double angleDeg;
+
+  List<Map<String, dynamic>> results = [];
+  // Return the list by searching nearby area
+
+  int lightDirection =
+      0; // For switch light screen Widget depends on atan2 angle
 
   late List responses;
-
-  bool isType = true;
+  // For remain time and signal info api Value
+  late bool isType;
+  // If true, set type [N, E, S, W], else [NE, SE, SW, NW]
 
   @override
   void initState() {
     super.initState();
     _toggleServiceStatusStream();
-    _apiService.setApiKey();
+    _crossInfoApiService.setApiKey(); // Set Api value
   }
 
   @override
@@ -216,6 +231,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<bool> _handlePermission() async {
+    // Request location permission on Android
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -250,6 +266,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _toggleServiceStatusStream() async {
+    // Set location service stream
     bool permission;
     permission = await _handlePermission();
 
@@ -294,31 +311,31 @@ class _MainScreenState extends State<MainScreen> {
         results = [];
 
         results = await _spatialDbService.findIdsWithinArea(
-            position.longitude, position.latitude, 5000);
-
-        // for (var result in results) {
-        //   print('[Test] ${result['id']}');
-        // }
+            position.longitude, position.latitude, 500);
 
         if (results.length == 1) {
+          // In area, if there is the one result (Our purpose)
+
           int id = results[0]['id'];
 
           if (_id != id) {
             setState(() {
               _id = id;
             });
-            _apiService.setId(id.toString());
+            _crossInfoApiService.setId(id.toString());
 
             Stopwatch stopwatch = Stopwatch();
             stopwatch.start();
             final Future<RemainTimeModel?> rtFuture =
-                _apiService.getRemainTime();
+                _crossInfoApiService.getRemainTime();
 
             final Future<SignalInfoModel?> siFuture =
-                _apiService.getSignalInfo();
+                _crossInfoApiService.getSignalInfo();
 
-            responses = await Future.wait(
-                [siFuture, rtFuture]); // RT api is about 3 seconds faster.
+            responses = await Future.wait([
+              siFuture,
+              rtFuture
+            ]); // RT api is about 3 seconds faster. Set TrafficInfoModel time value - 30
 
             stopwatch.stop();
             print('{Api Time ${stopwatch.elapsed}}');
@@ -333,7 +350,7 @@ class _MainScreenState extends State<MainScreen> {
             angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
                 position.latitude, position.longitude);
 
-            double angleDeg = angleRad * (180 / pi);
+            angleDeg = angleRad * (180 / pi);
 
             if (angleDeg < 0) {
               angleDeg += 360;
@@ -341,95 +358,94 @@ class _MainScreenState extends State<MainScreen> {
 
             setState(() {
               if (isType) {
-                if (angleDeg >= 0 && angleDeg < 45 ||
+                if (angleDeg >= 45 && angleDeg < 135) {
+                  lightDirection = 1; // North
+                } else if (angleDeg >= 0 && angleDeg < 45 ||
                     angleDeg >= 315 && angleDeg < 360) {
-                  lightDirection = 2; // 동쪽 (E)
+                  lightDirection = 2; // East
                 } else if (angleDeg >= 225 && angleDeg < 315) {
-                  lightDirection = 3; // 남쪽 (S)
-                } else if (angleDeg >= 135 && angleDeg < 225) {
-                  lightDirection = 4; // 서쪽 (W)
+                  lightDirection = 3; // South
                 } else {
-                  lightDirection = 1; // 북쪽 (N)
+                  lightDirection = 4; // West
                 }
 
                 lightValue1 = TrafficInfoModel(
                     name: 'N',
                     isMovementAllowed: changeSigToBool(responses[0].ntPdsgStat),
-                    time: responses[1].ntPdsgStat); // north
+                    time: responses[1].ntPdsgStat - 30); // North
                 lightValue2 = TrafficInfoModel(
                     name: 'E',
                     isMovementAllowed: changeSigToBool(responses[0].etPdsgStat),
-                    time: responses[1].etPdsgStat); // east
+                    time: responses[1].etPdsgStat - 30); // East
                 lightValue3 = TrafficInfoModel(
                     name: 'S',
                     isMovementAllowed: changeSigToBool(responses[0].stPdsgStat),
-                    time: responses[1].stPdsgStat); // south
+                    time: responses[1].stPdsgStat - 30); // South
                 lightValue4 = TrafficInfoModel(
                     name: 'W',
                     isMovementAllowed: changeSigToBool(responses[0].wtPdsgStat),
-                    time: responses[1].wtPdsgStat); // west
+                    time: responses[1].wtPdsgStat - 30); // West
               } else {
                 if (angleDeg >= 0 && angleDeg < 90) {
-                  lightDirection = 1; // 북동쪽 (NE)
+                  lightDirection = 1; // North East
                 } else if (angleDeg >= 270 && angleDeg < 360) {
-                  lightDirection = 3; // 남동쪽 (SE)
+                  lightDirection = 2; // South East
                 } else if (angleDeg >= 180 && angleDeg < 270) {
-                  lightDirection = 2; // 남서쪽 (SW)
+                  lightDirection = 3; // South West
                 } else {
-                  lightDirection = 4; // 북서쪽 (NW)
+                  lightDirection = 4; // North West
                 }
 
                 lightValue1 = TrafficInfoModel(
                     name: 'N E',
                     isMovementAllowed: changeSigToBool(responses[0].nePdsgStat),
-                    time: responses[1].nePdsgStat); // north east
+                    time: responses[1].nePdsgStat - 30); // North East
                 lightValue2 = TrafficInfoModel(
                     name: 'S E',
                     isMovementAllowed: changeSigToBool(responses[0].sePdsgStat),
-                    time: responses[1].sePdsgStat); // south east
+                    time: responses[1].sePdsgStat - 30); // South East
                 lightValue3 = TrafficInfoModel(
                     name: 'S W',
                     isMovementAllowed: changeSigToBool(responses[0].swPdsgStat),
-                    time: responses[1].swPdsgStat); // south west
+                    time: responses[1].swPdsgStat - 30); // South West
                 lightValue4 = TrafficInfoModel(
                     name: 'N W',
                     isMovementAllowed: changeSigToBool(responses[0].nwPdsgStat),
-                    time: responses[1].nwPdsgStat); // north west
+                    time: responses[1].nwPdsgStat - 30); // North West
               }
-            
             });
           } else if (_id == id) {
             angleRad = returnAtan2(results[0]['minX'], results[0]['minY'],
                 position.latitude, position.longitude);
 
-            double angleDeg = angleRad * (180 / pi);
+            angleDeg = angleRad * (180 / pi);
 
             if (isType) {
-              if (angleDeg >= 0 && angleDeg < 45 ||
-                  angleDeg >= 315 && angleDeg < 360) {
-                lightDirection = 2; // 동쪽 (E)
-              } else if (angleDeg >= 225 && angleDeg < 315) {
-                lightDirection = 3; // 남쪽 (S)
-              } else if (angleDeg >= 135 && angleDeg < 225) {
-                lightDirection = 4; // 서쪽 (W)
-              } else {
-                lightDirection = 1; // 북쪽 (N)
-              }
+               if (angleDeg >= 45 && angleDeg < 135) {
+                  lightDirection = 1; // North
+                } else if (angleDeg >= 0 && angleDeg < 45 ||
+                    angleDeg >= 315 && angleDeg < 360) {
+                  lightDirection = 2; // East
+                } else if (angleDeg >= 225 && angleDeg < 315) {
+                  lightDirection = 3; // South
+                } else {
+                  lightDirection = 4; // West
+                }
             } else {
               if (angleDeg >= 0 && angleDeg < 90) {
-                lightDirection = 1; // 북동쪽 (NE)
-              } else if (angleDeg >= 270 && angleDeg < 360) {
-                lightDirection = 3; // 남동쪽 (SE)
-              } else if (angleDeg >= 180 && angleDeg < 270) {
-                lightDirection = 2; // 남서쪽 (SW)
-              } else {
-                lightDirection = 4; // 북서쪽 (NW)
-              }
+                  lightDirection = 1; // North East
+                } else if (angleDeg >= 270 && angleDeg < 360) {
+                  lightDirection = 2; // South East
+                } else if (angleDeg >= 180 && angleDeg < 270) {
+                  lightDirection = 3; // South West
+                } else {
+                  lightDirection = 4; // North West
+                }
             }
 
-            setState(() {});
+            setState(() {}); // Set light direciton
           }
-        } else {
+        } else { // If there is no result or more than 2 results
           setState(() {
             lightValue0 = defaultValue;
             lightValue1 = defaultValue;
@@ -454,11 +470,11 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  bool? changeSigToBool(String? SigState) {
-    if (SigState == 'protected-Movement-Allowed' ||
-        SigState == 'permissive-Movement-Allowed') {
+  bool? changeSigToBool(String? sigState) {
+    if (sigState == 'permissive-Movement-Allowed') { // Green light
       return true;
-    } else if (SigState == 'stop-And-Remain') {
+    } else if (sigState == 'protected-Movement-Allowed' ||
+        sigState == 'stop-And-Remain') { // Red light
       return false;
     }
 
@@ -466,6 +482,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   double returnAtan2(double lat1, double lon1, double lat2, double lon2) {
+    
     double phi1 = degreesToRadians(lat1);
     double lambda1 = degreesToRadians(lon1);
 

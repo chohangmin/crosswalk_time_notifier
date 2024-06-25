@@ -12,8 +12,10 @@ class DbFetchLoadWidget extends StatefulWidget {
 }
 
 class _DbFetchLoadWidgetState extends State<DbFetchLoadWidget> {
-  bool _dataFetched = false;
-  final bool _apiAvailable = false;
+
+  bool _dataFetched = false; // If data fetched, load main screen widget
+  final bool _apiAvailable = false; // Current fetch api is not available, If false get local Cross info data
+
   @override
   Widget build(BuildContext context) {
     if (!_dataFetched) {
@@ -27,11 +29,11 @@ class _DbFetchLoadWidgetState extends State<DbFetchLoadWidget> {
 
                 await dbApiService.setApiKey();
                 List<CrossMapModel> crossMaps =
-                    await dbApiService.getCrossMap();
+                    await dbApiService.getCrossMap(); // Get api data
 
-                spatialDbService.makeRtreeDb(crossMaps);
+                spatialDbService.makeDbFromApi(crossMaps); // Make rtree db using api data 
               } else {
-                spatialDbService.makeDb();
+                spatialDbService.makeDbFromCsv(); // Make rtree db using local csv data
               }
 
               setState(() {
