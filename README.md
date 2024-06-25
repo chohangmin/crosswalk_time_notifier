@@ -52,3 +52,17 @@ V2는 4개의 신호정보 중 사용자와 가장 가까운 방향의 신호등
 그렇게 도출한 교차로 id와 위치정보, 그리고 현재 사용자의 위치 정보를 비교하여 현재 어떤 방위각에 사용자가 존재하는지를 파악하고 해당 방위각에 맞는 신호 정보만을 화면에 출력하는 식으로 작동하게 된다. 
 
 만일 사용자의 방위각이 이동되어 다른 신호정보를 원한다고 하면 해당 신호 정보로 변경해준다. 
+
+# 실행 화면 
+## Data Fetch Screen
+
+![Data Fetch Screen](./images/fetch screen.png)
+
+## Default Screen
+
+![Default Main Screen](./images/default main screen.png)
+
+## Light Screen
+
+![Light Main Screen](./images/light main screen.png)
+
